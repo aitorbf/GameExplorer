@@ -27,3 +27,4 @@ __Snapshots__/
 # Other
 *.log
 *.env
+*.xcconfig
