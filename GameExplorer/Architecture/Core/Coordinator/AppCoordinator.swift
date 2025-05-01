@@ -11,38 +11,55 @@ import SwiftUI
 final class AppCoordinator: ObservableObject {
     
     @Published var rootTab: TabItem = .upcoming
-
-    let container: DIContainer
-
+    
+    private let container: DIContainer
+    
+    private lazy var searchView: AnyView = {
+        AnyView(
+            NavigationStack {
+                DiscoverView(viewModel: container.discoverViewModel())
+                    .navigationTitle("Discover")
+                    .background(Color(.background).ignoresSafeArea())
+                    .toolbarSetup()
+            }
+        )
+    }()
+    
+    private lazy var upcomingView: AnyView = {
+        AnyView(
+            NavigationStack {
+                UpcomingGamesView(viewModel: container.upcomingGamesViewModel())
+                    .navigationTitle("Upcoming Games")
+                    .background(Color(.background).ignoresSafeArea())
+                    .toolbarSetup()
+            }
+        )
+    }()
+    
+    private lazy var favoriteView: AnyView = {
+        AnyView(
+            NavigationStack {
+                FavoriteView()
+                    .navigationTitle("Favorites")
+                    .background(Color(.background).ignoresSafeArea())
+                    .toolbarSetup()
+            }
+        )
+    }()
+    
     init(container: DIContainer) {
         self.container = container
     }
-
+    
     func makeSearchView() -> some View {
-        NavigationStack {
-            SearchView()
-                .navigationTitle("Search")
-                .background(Color(.background).ignoresSafeArea())
-                .toolbarSetup()
-        }
+        searchView
     }
-
-    @MainActor
+    
     func makeUpcomingView() -> some View {
-        NavigationStack {
-            UpcomingGamesView(viewModel: container.upcomingGamesViewModel())
-                .navigationTitle("Upcoming Games")
-                .background(Color(.background).ignoresSafeArea())
-                .toolbarSetup()
-        }
+        upcomingView
     }
-
+    
     func makeFavoriteView() -> some View {
-        NavigationStack {
-            FavoriteView()
-                .navigationTitle("Favorites")
-                .background(Color(.background).ignoresSafeArea())
-                .toolbarSetup()
-        }
+        favoriteView
     }
 }

@@ -14,7 +14,11 @@ final class DIContainer {
         self.gameRepository = gameRepository
     }
 
-    @MainActor
+    func discoverViewModel() -> DiscoverViewModel {
+        let searchGamesUseCase = SearchGamesUseCase(repository: gameRepository)
+        return DiscoverViewModel(searchGamesUseCase: searchGamesUseCase)
+    }
+
     func upcomingGamesViewModel() -> UpcomingGamesViewModel {
         let fetchUpcomingGamesUseCase = FetchUpcomingGamesUseCase(repository: gameRepository)
         return UpcomingGamesViewModel(fetchUpcomingGamesUseCase: fetchUpcomingGamesUseCase)

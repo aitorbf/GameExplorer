@@ -8,7 +8,6 @@
 import Foundation
 import SwiftUI
 
-@MainActor
 final class UpcomingGamesViewModel: ObservableObject {
     @Published var games: [Game] = []
     @Published var isLoading: Bool = false
@@ -18,17 +17,24 @@ final class UpcomingGamesViewModel: ObservableObject {
 
     init(fetchUpcomingGamesUseCase: FetchUpcomingGamesUseCase) {
         self.fetchUpcomingGamesUseCase = fetchUpcomingGamesUseCase
+        
+        Task { @MainActor in
+            await loadGames()
+        }
     }
-
+    
+    @MainActor
     func loadGames() async {
         isLoading = true
         errorMessage = nil
+        
         do {
             let result = try await fetchUpcomingGamesUseCase.execute()
             games = result
         } catch {
             errorMessage = "Failed to load games: \(error.localizedDescription)"
         }
+        
         isLoading = false
     }
 }

@@ -19,7 +19,7 @@ struct RootView: View {
         ZStack(alignment: .bottom){
             TabView(selection: $coordinator.rootTab) {
                 coordinator.makeSearchView()
-                    .tag(TabItem.search)
+                    .tag(TabItem.discover)
                 
                 coordinator.makeUpcomingView()
                     .tag(TabItem.upcoming)
@@ -66,7 +66,8 @@ struct RootView: View {
                 .resizable()
                 .renderingMode(.template)
                 .foregroundColor(isActive ? Color(.textPrimary) : Color(.shadowPurple))
-                .frame(width: 20, height: 20)
+                .scaledToFit()
+                .frame(height: 20)
             if isActive{
                 Text(title)
                     .font(.subheadline)
@@ -82,14 +83,14 @@ struct RootView: View {
 
 enum TabItem: Int, CaseIterable{
     
-    case search = 0
+    case discover = 0
     case upcoming = 1
     case favorite = 2
     
     var title: String{
         switch self {
-        case .search:
-            return "Search"
+        case .discover:
+            return "Discover"
         case .upcoming:
             return "Upcoming"
         case .favorite:
@@ -99,8 +100,8 @@ enum TabItem: Int, CaseIterable{
     
     var iconName: String{
         switch self {
-        case .search:
-            return "magnifyingglass"
+        case .discover:
+            return "binoculars.fill"
         case .upcoming:
             return "calendar"
         case .favorite:

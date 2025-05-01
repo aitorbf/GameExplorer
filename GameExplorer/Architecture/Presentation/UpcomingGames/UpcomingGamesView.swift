@@ -46,9 +46,6 @@ struct UpcomingGamesView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .task {
-            await viewModel.loadGames()
-        }
     }
 }
 

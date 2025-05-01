@@ -7,9 +7,10 @@
 
 import Foundation
 
-struct Game: Identifiable, Equatable {
+struct Game: Identifiable, Equatable, Hashable {
     
-    let id: String
+    let id: UUID
+    let gameId: String
     let name: String
     let releaseDate: Date
     let coverUrl: URL?
@@ -17,7 +18,8 @@ struct Game: Identifiable, Equatable {
     
     static func from(entity: GameEntity) -> Game {
         Game(
-            id: entity.id,
+            id: UUID(),
+            gameId: entity.id,
             name: entity.name,
             releaseDate: entity.firstReleaseDate,
             coverUrl: URL(string: entity.coverUrl ?? ""),
@@ -36,7 +38,8 @@ extension Game {
         videoUrl: URL? = URL(string: "https://www.youtube.com/watch?v=D0UnqGm_miA")
     ) -> Game {
         Game(
-            id: id,
+            id: UUID(),
+            gameId: id,
             name: name,
             releaseDate: releaseDate,
             coverUrl: coverUrl,
