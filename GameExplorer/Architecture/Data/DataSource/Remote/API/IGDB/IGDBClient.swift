@@ -61,7 +61,7 @@ final class IGDBClient {
         if !searchQuery.isEmpty {
             query = query.search(searchQuery: searchQuery)
         } else {
-            query = query.sort(field: "first_release_date", order: .DESCENDING)
+            query = query.sort(field: "hypes", order: .DESCENDING)
         }
         
         return try await withCheckedThrowingContinuation { continuation in

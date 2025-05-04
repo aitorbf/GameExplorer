@@ -8,9 +8,11 @@
 import Foundation
 
 final class DIContainer {
+    static let shared = DIContainer()
+    
     private let gameRepository: GameRepository
 
-    init(gameRepository: GameRepository = GameRepositoryImpl()) {
+    private init(gameRepository: GameRepository = GameRepositoryImpl()) {
         self.gameRepository = gameRepository
     }
 
@@ -22,6 +24,10 @@ final class DIContainer {
     func upcomingGamesViewModel() -> UpcomingGamesViewModel {
         let fetchUpcomingGamesUseCase = FetchUpcomingGamesUseCase(repository: gameRepository)
         return UpcomingGamesViewModel(fetchUpcomingGamesUseCase: fetchUpcomingGamesUseCase)
+    }
+    
+    func gameDetailViewModel(game: Game) -> GameDetailViewModel {
+        return GameDetailViewModel(game: game)
     }
 }
 

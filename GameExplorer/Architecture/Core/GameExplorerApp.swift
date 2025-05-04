@@ -9,11 +9,10 @@ import SwiftUI
 
 @main
 struct GameExplorerApp: App {
-
+    
     var body: some Scene {
         WindowGroup {
-            RootView(coordinator: AppCoordinator(container: DIContainer()))
-                .preferredColorScheme(.dark)
+            RootView()
         }
     }
 }

@@ -9,109 +9,42 @@ import SwiftUI
 
 struct RootView: View {
     
-    @StateObject private var coordinator: AppCoordinator
+    @StateObject var discoverViewModel = DIContainer.shared.discoverViewModel()
+    @StateObject var upcomingGamesViewModel = DIContainer.shared.upcomingGamesViewModel()
     
-    init(coordinator: AppCoordinator) {
-        _coordinator = StateObject(wrappedValue: coordinator)
-    }
+    @StateObject private var coordinator: Coordinator = Coordinator()
+    @State private var selectedTab: TabItem = .discover
+    @State private var isTabBarVisible: Bool = true
     
     var body: some View {
-        ZStack(alignment: .bottom){
-            TabView(selection: $coordinator.rootTab) {
-                coordinator.makeSearchView()
+        ZStack(alignment: .bottom) {
+            TabView(selection: $selectedTab) {
+                DiscoverView(viewModel: discoverViewModel)
+                    .environmentObject(coordinator)
                     .tag(TabItem.discover)
                 
-                coordinator.makeUpcomingView()
+                UpcomingGamesView(viewModel: upcomingGamesViewModel)
                     .tag(TabItem.upcoming)
                 
-                coordinator.makeFavoriteView()
+                FavoritesView()
                     .tag(TabItem.favorite)
             }
-            .tint(Color(.textPrimary))
-            .toolbarBackground(Color(.surface), for: .tabBar)
-            .toolbarBackground(.visible, for: .tabBar)
             
-            customTabBar
+            CustomTabBar(selectedTab: $selectedTab)
+                .offset(y: isTabBarVisible ? 0 : 100)
+                .opacity(isTabBarVisible ? 1 : 0)
+                .animation(.smooth, value: isTabBarVisible)
         }
+        .tint(Color(.textPrimary))
         .background(Color(.background).ignoresSafeArea())
-    }
-    
-    private var customTabBar: some View {
-        ZStack {
-            HStack {
-                ForEach(TabItem.allCases, id: \.self) { item in
-                    Button {
-                        coordinator.rootTab = item
-                    } label: {
-                        customTabItem(
-                            imageName: item.iconName,
-                            title: item.title,
-                            isActive: (coordinator.rootTab == item)
-                        )
-                    }
-                }
-            }
-            .padding(6)
-        }
-        .frame(height: 70)
-        .background(Color(.highlightPurple))
-        .cornerRadius(35)
-        .padding(.horizontal, 26)
-    }
-    
-    private func customTabItem(imageName: String, title: String, isActive: Bool) -> some View{
-        HStack(spacing: 10){
-            Spacer()
-            Image(systemName: imageName)
-                .resizable()
-                .renderingMode(.template)
-                .foregroundColor(isActive ? Color(.textPrimary) : Color(.shadowPurple))
-                .scaledToFit()
-                .frame(height: 20)
-            if isActive{
-                Text(title)
-                    .font(.subheadline)
-                    .foregroundColor(isActive ? Color(.textPrimary) : Color(.shadowPurple))
-            }
-            Spacer()
-        }
-        .frame(maxWidth: isActive ? .infinity : 60, maxHeight: 60)
-        .background(isActive ? Color(.shadowPurple) : .clear)
-        .cornerRadius(30)
-    }
-}
-
-enum TabItem: Int, CaseIterable{
-    
-    case discover = 0
-    case upcoming = 1
-    case favorite = 2
-    
-    var title: String{
-        switch self {
-        case .discover:
-            return "Discover"
-        case .upcoming:
-            return "Upcoming"
-        case .favorite:
-            return "Favorites"
-        }
-    }
-    
-    var iconName: String{
-        switch self {
-        case .discover:
-            return "binoculars.fill"
-        case .upcoming:
-            return "calendar"
-        case .favorite:
-            return "star.fill"
-        }
+        .environment(\.tabBarVisibility, $isTabBarVisible)
     }
 }
 
 #Preview {
-    let container = DIContainer.mock
-    let coordinator = AppCoordinator(container: container)
-    RootView(coordinator: coordinator)
+    RootView(
+        discoverViewModel: DIContainer.mock.discoverViewModel(),
+        upcomingGamesViewModel: DIContainer.mock.upcomingGamesViewModel()
+    )
+            
 }

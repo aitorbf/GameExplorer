@@ -10,9 +10,9 @@ import SwiftUI
 extension View {
     func toolbarSetup() -> some View {
         self
-            .toolbarColorScheme(.dark, for: .navigationBar)
-            .toolbarBackground(Color(.shadowPurple), for: .navigationBar)
-            .toolbarBackground(.visible, for: .navigationBar)
+            .toolbarColorScheme(.dark, for: .navigationBar, .tabBar)
+            .toolbarBackground(Color(.shadowPurple), for: .navigationBar, .tabBar)
+            .toolbarBackground(.visible, for: .navigationBar, .tabBar)
             .toolbarBackground(.hidden, for: .tabBar)
     }
 }

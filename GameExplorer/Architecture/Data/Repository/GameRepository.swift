@@ -49,13 +49,16 @@ final class MockGameRepository: GameRepository {
     }
     
     func searchGames(searchQuery: String, offset: Int, limit: Int) async throws -> [GameEntity] {
-        let filtered = allGames.filter {
-            $0.name.lowercased().contains(searchQuery.lowercased())
+        let filteredGames = allGames
+        if !searchQuery.isEmpty {
+            let filteredGames = allGames.filter {
+                $0.name.lowercased().contains(searchQuery.lowercased())
+            }
         }
         
-        let start = min(offset, filtered.count)
-        let end = min(start + limit, filtered.count)
-        return Array(filtered[start..<end])
+        let start = min(offset, filteredGames.count)
+        let end = min(start + limit, filteredGames.count)
+        return Array(filteredGames[start..<end])
     }
 }
 #endif
