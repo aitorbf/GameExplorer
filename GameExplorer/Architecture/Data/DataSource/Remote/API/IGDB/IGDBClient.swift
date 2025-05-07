@@ -10,7 +10,6 @@ import IGDB_SWIFT_API
 
 final class IGDBClient {
     private let clientID = Bundle.main.infoDictionary?["IGDB_CLIENT_ID"] as? String
-    private let youtubeUrl = "https://www.youtube.com/watch?v="
     
     func fetchUpcomingGames() async throws -> [GameEntity] {
         try await IGDBAuthManager.shared.ensureValidToken()
@@ -30,13 +29,7 @@ final class IGDBClient {
         return try await withCheckedThrowingContinuation { continuation in
             wrapper.games(apiCalypse: query, result: { games in
                 let gameEntities = games.map { game in
-                    GameEntity(
-                        id: String(game.id),
-                        name: game.name,
-                        firstReleaseDate: Date(timeIntervalSince1970: game.firstReleaseDate.timeIntervalSince1970),
-                        coverUrl: imageBuilder(imageID: game.cover.imageID, size: .SCREENSHOT_HUGE, imageType: .PNG),
-                        videoUrl: "\(self.youtubeUrl)\(game.videos.first?.videoID ?? "")"
-                    )
+                    GameEntityMapper.mapIGDBGame(game: game)
                 }
                 continuation.resume(returning: gameEntities)
             }, errorResponse: { error in
@@ -54,7 +47,7 @@ final class IGDBClient {
         
         let wrapper = IGDBWrapper(clientID: clientID ?? "", accessToken: accessToken)
         var query = APICalypse()
-            .fields(fields: "name,first_release_date,cover.image_id,videos.video_id")
+            .fields(fields: "name,first_release_date,cover.image_id,videos.video_id,hypes")
             .limit(value: Int32(limit))
             .offset(value: Int32(offset))
         
@@ -67,15 +60,33 @@ final class IGDBClient {
         return try await withCheckedThrowingContinuation { continuation in
             wrapper.games(apiCalypse: query, result: { games in
                 let gameEntities = games.map { game in
-                    GameEntity(
-                        id: String(game.id),
-                        name: game.name,
-                        firstReleaseDate: Date(timeIntervalSince1970: game.firstReleaseDate.timeIntervalSince1970),
-                        coverUrl: imageBuilder(imageID: game.cover.imageID, size: .COVER_SMALL, imageType: .PNG),
-                        videoUrl: "\(self.youtubeUrl)\(game.videos.first?.videoID ?? "")"
-                    )
+                    GameEntityMapper.mapIGDBGame(game: game)
                 }
                 continuation.resume(returning: gameEntities)
+            }, errorResponse: { error in
+                continuation.resume(throwing: error)
+            })
+        }
+    }
+    
+    func fetchGame(withId id: String) async throws -> GameEntity? {
+        try await IGDBAuthManager.shared.ensureValidToken()
+        
+        guard let accessToken = IGDBAuthManager.shared.currentAccessToken else {
+            throw URLError(.userAuthenticationRequired)
+        }
+        
+        let wrapper = IGDBWrapper(clientID: clientID ?? "", accessToken: accessToken)
+        let query = APICalypse()
+            .fields(fields: "name,summary,first_release_date,cover.image_id,videos.video_id,screenshots.image_id,genres.name,platforms.name,involved_companies.company.name,total_rating")
+            .where(query: "id = \(id)")
+        
+        return try await withCheckedThrowingContinuation { continuation in
+            wrapper.games(apiCalypse: query, result: { games in
+                let gameEntity = games.first.map { game in
+                    GameEntityMapper.mapIGDBGame(game: game)
+                }
+                continuation.resume(returning: gameEntity)
             }, errorResponse: { error in
                 continuation.resume(throwing: error)
             })

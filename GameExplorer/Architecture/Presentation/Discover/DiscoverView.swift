@@ -16,16 +16,15 @@ struct DiscoverView: View {
     
     var body: some View {
         NavigationStack(path: $coordinator.path) {
-            VStack(spacing: 0) {
+            VStack(spacing: .zero) {
                 if viewModel.isLoading && viewModel.games.isEmpty {
-                    ProgressView()
+                    ProgressView("Searching...")
+                        .foregroundStyle(Color(.textPrimary))
                         .padding()
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else if let error = viewModel.errorMessage {
                     Text(error)
                         .foregroundStyle(Color(.error))
                         .padding()
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
                     ScrollView(showsIndicators: false) {
                         LazyVStack {
@@ -38,7 +37,7 @@ struct DiscoverView: View {
                                         }
                                     }
                                     .onTapGesture {
-                                        coordinator.push(.gameDetail(game))
+                                        coordinator.push(.gameDetail(gameId: game.gameId))
                                     }
                             }
                         }

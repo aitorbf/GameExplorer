@@ -9,7 +9,7 @@
 import SwiftUI
 
 enum Route: Hashable {
-    case gameDetail(Game)
+    case gameDetail(gameId: String)
 }
 
 final class Coordinator: ObservableObject {
@@ -31,9 +31,9 @@ final class Coordinator: ObservableObject {
     @ViewBuilder
     func build(route: Route) -> some View {
         switch route {
-        case .gameDetail(let game):
+        case .gameDetail(let gameId):
             GameDetailView(
-                viewModel: DIContainer.shared.gameDetailViewModel(game: game)
+                viewModel: DIContainer.shared.gameDetailViewModel(gameId: gameId)
             )
         }
     }

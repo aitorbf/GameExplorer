@@ -11,7 +11,7 @@ import SwiftUI
 struct UpcomingGameCard: View {
     
     let game: Game
-    var playVideo: Bool
+    let playVideo: Bool
     
     @State private var contentSize: CGSize = .zero
     private let marqueeDelay: Double = 1.2

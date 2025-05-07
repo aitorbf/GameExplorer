@@ -16,7 +16,9 @@ struct CustomTabBar: View {
             HStack {
                 ForEach(TabItem.allCases, id: \.self) { item in
                     Button {
-                        selectedTab = item
+                        withAnimation {
+                            selectedTab = item
+                        }
                     } label: {
                         customTabItem(
                             imageName: item.iconName,

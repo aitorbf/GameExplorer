@@ -11,7 +11,7 @@ struct UpcomingGamesView: View {
     
     @ObservedObject var viewModel: UpcomingGamesViewModel
     
-    @State private var selectedVideoURL: URL?
+    @State private var selectedGameId: UUID?
     
     var body: some View {
         NavigationView {
@@ -19,24 +19,31 @@ struct UpcomingGamesView: View {
                 if viewModel.isLoading {
                     ProgressView("Loading upcoming games...")
                         .foregroundStyle(Color(.textPrimary))
-                        .tint(Color(.textPrimary))
+                        .padding()
                 } else if let error = viewModel.errorMessage {
                     Text(error)
                         .foregroundStyle(Color(.error))
+                        .padding()
                 } else {
                     ScrollView(showsIndicators: false) {
                         LazyVStack(spacing: 32) {
                             ForEach(viewModel.games) { game in
-                                UpcomingGameCard(game: game, playVideo: selectedVideoURL != nil && game.videoUrl == selectedVideoURL)
-                                    .padding(.horizontal)
-                                    .onTapGesture {
-                                        selectedVideoURL = game.videoUrl
+                                UpcomingGameCard(
+                                    game: game,
+                                    playVideo: selectedGameId == game.id
+                                )
+                                .padding(.horizontal)
+                                .contentShape(Rectangle())
+                                .onTapGesture {
+                                    withAnimation {
+                                        selectedGameId = game.id
                                     }
-                                    .onDisappear {
-                                        if game.videoUrl == selectedVideoURL {
-                                            selectedVideoURL = nil
-                                        }
+                                }
+                                .onDisappear {
+                                    if selectedGameId == game.id {
+                                        selectedGameId = nil
                                     }
+                                }
                             }
                         }
                         .padding(.vertical, 32)

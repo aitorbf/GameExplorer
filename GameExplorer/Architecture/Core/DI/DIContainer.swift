@@ -26,8 +26,9 @@ final class DIContainer {
         return UpcomingGamesViewModel(fetchUpcomingGamesUseCase: fetchUpcomingGamesUseCase)
     }
     
-    func gameDetailViewModel(game: Game) -> GameDetailViewModel {
-        return GameDetailViewModel(game: game)
+    func gameDetailViewModel(gameId: String) -> GameDetailViewModel {
+        let fetchGameUseCase = FetchGameUseCase(repository: gameRepository)
+        return GameDetailViewModel(gameId: gameId, fetchGameUseCase: fetchGameUseCase)
     }
 }
 
