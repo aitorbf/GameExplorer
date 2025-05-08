@@ -17,13 +17,19 @@ final class GameDetailViewModel: ObservableObject {
     @Published var errorMessage: String?
 
     private let fetchGameUseCase: FetchGameUseCase
+    private let isGameFavoriteUseCase: IsGameFavoriteUseCase
+    private let toggleFavoriteGameUseCase: ToggleFavoriteGameUseCase
 
     init(
         gameId: String,
-        fetchGameUseCase: FetchGameUseCase
+        fetchGameUseCase: FetchGameUseCase,
+        isGameFavoriteUseCase: IsGameFavoriteUseCase,
+        toggleFavoriteGameUseCase: ToggleFavoriteGameUseCase
     ) {
         self.gameId = gameId
         self.fetchGameUseCase = fetchGameUseCase
+        self.isGameFavoriteUseCase = isGameFavoriteUseCase
+        self.toggleFavoriteGameUseCase = toggleFavoriteGameUseCase
         
         Task { @MainActor in
             await loadGame()
@@ -38,6 +44,7 @@ final class GameDetailViewModel: ObservableObject {
         do {
             let result = try await fetchGameUseCase.execute(gameId: gameId)
             game = result
+            isFavorite = isGameFavoriteUseCase.execute(gameId: gameId)
         } catch {
             errorMessage = "Failed to load game with id \(gameId): \(error.localizedDescription)"
         }
@@ -46,17 +53,30 @@ final class GameDetailViewModel: ObservableObject {
     }
     
     func toggleFavorite() {
-        isFavorite.toggle()
+        guard let game else { return }
+        
+        do {
+            try toggleFavoriteGameUseCase.execute(game: game)
+            isFavorite.toggle()
+        } catch {
+            print("Failed to toggle favorite game: \(error.localizedDescription)")
+        }
     }
 }
 
 #if DEBUG
 extension GameDetailViewModel {
-    static func mock() -> GameDetailViewModel {
+    @MainActor static func mock() -> GameDetailViewModel {
         let fetchGameUseCase = FetchGameUseCase(repository: MockGameRepository())
+        // TODO: Mock repository
+        let modelContext = SwiftDataManager.preview.modelContext
+        let isGameFavoriteUseCase = IsGameFavoriteUseCase(repository: FavoritesRepositoryImpl(localDataSource: FavoritesLocalDataSourceImpl(context: modelContext)))
+        let toggleFavoriteGameUseCase = ToggleFavoriteGameUseCase(repository: FavoritesRepositoryImpl(localDataSource: FavoritesLocalDataSourceImpl(context: modelContext)))
         return GameDetailViewModel(
             gameId: "1",
-            fetchGameUseCase: fetchGameUseCase
+            fetchGameUseCase: fetchGameUseCase,
+            isGameFavoriteUseCase: isGameFavoriteUseCase,
+            toggleFavoriteGameUseCase: toggleFavoriteGameUseCase
         )
     }
 }

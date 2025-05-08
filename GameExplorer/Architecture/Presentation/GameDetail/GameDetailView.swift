@@ -272,5 +272,4 @@ private struct ScrollOffsetPreferenceKey: PreferenceKey {
 
 #Preview {
     GameDetailView(viewModel: GameDetailViewModel.mock())
-    
 }

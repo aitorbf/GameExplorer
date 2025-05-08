@@ -28,7 +28,7 @@ final class Coordinator: ObservableObject {
         path.removeLast(path.count)
     }
     
-    @ViewBuilder
+    @MainActor @ViewBuilder
     func build(route: Route) -> some View {
         switch route {
         case .gameDetail(let gameId):

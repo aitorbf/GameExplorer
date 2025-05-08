@@ -38,6 +38,22 @@ struct Game: Identifiable, Equatable, Hashable {
             companies: entity.companies
         )
     }
+    
+    func toEntity() -> GameEntity {
+            GameEntity(
+                id: gameId,
+                name: name,
+                summary: summary,
+                firstReleaseDate: releaseDate,
+                rating: Double(rating).map { $0 * 10 },
+                coverUrl: coverUrl?.absoluteString,
+                videoUrl: videoUrl?.absoluteString,
+                screenshotUrls: screenshotUrls.map { $0.absoluteString },
+                genres: genres,
+                platforms: platforms,
+                companies: companies
+            )
+        }
 }
 
 extension Game {

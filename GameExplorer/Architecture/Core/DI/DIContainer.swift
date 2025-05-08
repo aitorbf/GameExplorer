@@ -6,14 +6,29 @@
 //
 
 import Foundation
+import SwiftData
 
+@MainActor
 final class DIContainer {
-    static let shared = DIContainer()
     
+    static private(set) var shared: DIContainer!
+    
+    @MainActor
+    static func initialize(context: ModelContext) {
+        self.shared = DIContainer(modelContext: context)
+    }
+    
+    private let modelContext: ModelContext
     private let gameRepository: GameRepository
+    private let favoritesRepository: FavoritesRepository
 
-    private init(gameRepository: GameRepository = GameRepositoryImpl()) {
+    private init(
+        modelContext: ModelContext,
+        gameRepository: GameRepository = GameRepositoryImpl()
+    ) {
+        self.modelContext = modelContext
         self.gameRepository = gameRepository
+        self.favoritesRepository = FavoritesRepositoryImpl(localDataSource: FavoritesLocalDataSourceImpl(context: modelContext))
     }
 
     func discoverViewModel() -> DiscoverViewModel {
@@ -26,16 +41,34 @@ final class DIContainer {
         return UpcomingGamesViewModel(fetchUpcomingGamesUseCase: fetchUpcomingGamesUseCase)
     }
     
+    func favoritesViewModel() -> FavoritesViewModel {
+        let getFavoriteGamesUseCase = GetFavoriteGamesUseCase(repository: favoritesRepository)
+        return FavoritesViewModel(getFavoriteGamesUseCase: getFavoriteGamesUseCase)
+    }
+    
     func gameDetailViewModel(gameId: String) -> GameDetailViewModel {
         let fetchGameUseCase = FetchGameUseCase(repository: gameRepository)
-        return GameDetailViewModel(gameId: gameId, fetchGameUseCase: fetchGameUseCase)
+        let isGameFavoriteUseCase = IsGameFavoriteUseCase(repository: favoritesRepository)
+        let toggleFavoriteUseCase = ToggleFavoriteGameUseCase(repository: favoritesRepository)
+        return GameDetailViewModel(
+            gameId: gameId,
+            fetchGameUseCase: fetchGameUseCase,
+            isGameFavoriteUseCase: isGameFavoriteUseCase,
+            toggleFavoriteGameUseCase: toggleFavoriteUseCase
+        )
     }
 }
 
 #if DEBUG
+@MainActor
 extension DIContainer {
+    @MainActor
     static var mock: DIContainer {
-        DIContainer(gameRepository: MockGameRepository())
+        let context = SwiftDataManager.preview.modelContext
+        return DIContainer(
+            modelContext: context,
+            gameRepository: MockGameRepository()
+        )
     }
 }
 #endif

@@ -6,10 +6,12 @@
 //
 
 import Foundation
+import SwiftData
 
-struct GameEntity: Identifiable {
+@Model
+final class GameEntity: Identifiable {
     
-    var id: String
+    @Attribute(.unique) var id: String
     var name: String
     var summary: String?
     var firstReleaseDate: Date
@@ -20,6 +22,32 @@ struct GameEntity: Identifiable {
     var genres: [String]
     var platforms: [String]
     var companies: [String]
+    
+    init(
+        id: String,
+        name: String,
+        summary: String? = nil,
+        firstReleaseDate: Date,
+        rating: Double? = nil,
+        coverUrl: String? = nil,
+        videoUrl: String? = nil,
+        screenshotUrls: [String] = [],
+        genres: [String] = [],
+        platforms: [String] = [],
+        companies: [String] = []
+    ) {
+        self.id = id
+        self.name = name
+        self.summary = summary
+        self.firstReleaseDate = firstReleaseDate
+        self.rating = rating
+        self.coverUrl = coverUrl
+        self.videoUrl = videoUrl
+        self.screenshotUrls = screenshotUrls
+        self.genres = genres
+        self.platforms = platforms
+        self.companies = companies
+    }
 }
 
 extension GameEntity {

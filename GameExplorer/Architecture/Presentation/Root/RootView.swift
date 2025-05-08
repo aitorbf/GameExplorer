@@ -11,9 +11,10 @@ struct RootView: View {
     
     @StateObject var discoverViewModel = DIContainer.shared.discoverViewModel()
     @StateObject var upcomingGamesViewModel = DIContainer.shared.upcomingGamesViewModel()
+    @StateObject var favoritesViewModel = DIContainer.shared.favoritesViewModel()
     
     @StateObject private var coordinator: Coordinator = Coordinator()
-    @State private var selectedTab: TabItem = .discover
+    @State private var selectedTab: TabItem = .upcoming
     @State private var isTabBarVisible: Bool = true
     
     var body: some View {
@@ -28,7 +29,8 @@ struct RootView: View {
                     .offset(x: selectedTab == .upcoming ? 0 : selectedTab == .favorite ? -UIScreen.main.bounds.width : UIScreen.main.bounds.width)
                     .opacity(selectedTab == .upcoming ? 1 : 0)
 
-                FavoritesView()
+                FavoritesView(viewModel: favoritesViewModel)
+                    .environmentObject(coordinator)
                     .offset(x: selectedTab == .favorite ? 0 : UIScreen.main.bounds.width)
                     .opacity(selectedTab == .favorite ? 1 : 0)
             }
@@ -48,7 +50,8 @@ struct RootView: View {
 #Preview {
     RootView(
         discoverViewModel: DIContainer.mock.discoverViewModel(),
-        upcomingGamesViewModel: DIContainer.mock.upcomingGamesViewModel()
+        upcomingGamesViewModel: DIContainer.mock.upcomingGamesViewModel(),
+        favoritesViewModel: DIContainer.mock.favoritesViewModel()
     )
             
 }

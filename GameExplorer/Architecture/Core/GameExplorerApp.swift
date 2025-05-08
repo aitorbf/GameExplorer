@@ -10,6 +10,10 @@ import SwiftUI
 @main
 struct GameExplorerApp: App {
     
+    init() {
+        DIContainer.initialize(context: SwiftDataManager.shared.modelContext)
+    }
+    
     var body: some Scene {
         WindowGroup {
             RootView()
