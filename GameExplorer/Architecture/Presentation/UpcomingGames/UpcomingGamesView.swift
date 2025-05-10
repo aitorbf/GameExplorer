@@ -18,11 +18,11 @@ struct UpcomingGamesView: View {
             ZStack {
                 if viewModel.isLoading {
                     ProgressView("Loading upcoming games...")
-                        .foregroundStyle(Color(.textPrimary))
+                        .foregroundStyle(.textPrimary)
                         .padding()
                 } else if let error = viewModel.errorMessage {
                     Text(error)
-                        .foregroundStyle(Color(.error))
+                        .foregroundStyle(.error)
                         .padding()
                 } else {
                     ScrollView(showsIndicators: false) {
@@ -51,9 +51,10 @@ struct UpcomingGamesView: View {
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(Color(.background).ignoresSafeArea())
+            .background(Color.customBackground.ignoresSafeArea())
             .navigationTitle("Upcoming Games")
-            .toolbarSetup()
+            .toolbarBackground(.shadowPurple, for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
         }
     }
 }

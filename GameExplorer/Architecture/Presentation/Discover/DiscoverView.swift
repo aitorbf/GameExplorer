@@ -19,11 +19,11 @@ struct DiscoverView: View {
             VStack(spacing: .zero) {
                 if viewModel.isLoading && viewModel.games.isEmpty {
                     ProgressView("Searching...")
-                        .foregroundStyle(Color(.textPrimary))
+                        .foregroundStyle(.textPrimary)
                         .padding()
                 } else if let error = viewModel.errorMessage {
                     Text(error)
-                        .foregroundStyle(Color(.error))
+                        .foregroundStyle(.error)
                         .padding()
                 } else {
                     ScrollView(showsIndicators: false) {
@@ -46,13 +46,14 @@ struct DiscoverView: View {
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(Color(.background).ignoresSafeArea())
-            .searchable(text: $viewModel.searchQuery, placement: .navigationBarDrawer(displayMode: .always))
+            .background(Color.customBackground.ignoresSafeArea())
             .navigationTitle("Discover")
-            .toolbarSetup()
-            .navigationDestination(for: Route.self) { route in
-                self.coordinator.build(route: route)
+            .navigationDestination(for: Screen.self) { screen in
+                self.coordinator.build(screen)
             }
+            .searchable(text: $viewModel.searchQuery, placement: .navigationBarDrawer(displayMode: .always))
+            .toolbarBackground(.shadowPurple, for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
         }
         .onChange(of: coordinator.path) { _, newPath in
             isTabBarVisible.wrappedValue = newPath.isEmpty

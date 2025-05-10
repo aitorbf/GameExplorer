@@ -10,13 +10,19 @@ import SwiftUI
 @main
 struct GameExplorerApp: App {
     
+    @StateObject var appCoordinator = AppCoordinator()
+    
     init() {
         DIContainer.initialize(context: SwiftDataManager.shared.modelContext)
     }
     
     var body: some Scene {
         WindowGroup {
-            RootView()
+            appCoordinator
+                .buildHomeScreen()
+                .preferredColorScheme(.dark)
+                .tint(.white)
+                .environmentObject(appCoordinator)
         }
     }
 }

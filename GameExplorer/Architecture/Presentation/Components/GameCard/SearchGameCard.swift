@@ -21,7 +21,7 @@ struct SearchGameCard: View {
                     .cornerRadius(8)
             } placeholder: {
                 Rectangle()
-                    .fill(Color(.surface).opacity(0.3))
+                    .fill(.surface.opacity(0.3))
                     .frame(width: 80, height: 80)
                     .cornerRadius(8)
             }
@@ -29,11 +29,11 @@ struct SearchGameCard: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(game.name)
                     .font(.headline)
-                    .foregroundColor(Color(.textPrimary))
+                    .foregroundColor(.textPrimary)
                 
                 Text(game.releaseDate, style: .date)
                     .font(.subheadline)
-                    .foregroundColor(Color(.textSecondary))
+                    .foregroundColor(.textSecondary)
             }
             
             Spacer()

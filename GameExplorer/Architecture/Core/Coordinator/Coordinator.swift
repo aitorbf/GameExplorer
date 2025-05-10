@@ -8,16 +8,44 @@
 
 import SwiftUI
 
-enum Route: Hashable {
+enum Screen: Identifiable, Hashable {
+    
+    case home
     case gameDetail(gameId: String)
+    
+    var id: Self { return self }
 }
 
-final class Coordinator: ObservableObject {
+protocol CoordinatorProtocol: ObservableObject {
+    
+    var path: NavigationPath { get set }
+    
+    func push(_ screen:  Screen)
+    func pop()
+    func popToRoot()
+}
+
+final class AppCoordinator: ObservableObject {
+    
+    let discoverCoordinator: Coordinator = Coordinator()
+    let favoritesCoordinator: Coordinator = Coordinator()
+    
+    @MainActor
+    func buildHomeScreen() -> some View {
+        HomeView(
+            discoverViewModel: DIContainer.shared.discoverViewModel(),
+            upcomingGamesViewModel: DIContainer.shared.upcomingGamesViewModel(),
+            favoritesViewModel: DIContainer.shared.favoritesViewModel()
+        )
+    }
+}
+
+final class Coordinator: CoordinatorProtocol {
     
     @Published var path = NavigationPath()
     
-    func push(_ route: Route) {
-        path.append(route)
+    func push(_ screen: Screen) {
+        path.append(screen)
     }
     
     func pop() {
@@ -29,12 +57,14 @@ final class Coordinator: ObservableObject {
     }
     
     @MainActor @ViewBuilder
-    func build(route: Route) -> some View {
-        switch route {
+    func build(_ screen: Screen) -> some View {
+        switch screen {
         case .gameDetail(let gameId):
             GameDetailView(
                 viewModel: DIContainer.shared.gameDetailViewModel(gameId: gameId)
             )
+        default:
+            EmptyView()
         }
     }
 }

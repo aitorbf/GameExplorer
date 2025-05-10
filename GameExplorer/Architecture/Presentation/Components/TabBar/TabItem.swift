@@ -12,6 +12,17 @@ enum TabItem: CaseIterable {
     case upcoming
     case favorite
     
+    var navigationTitle: String{
+        switch self {
+        case .discover:
+            return "Discover"
+        case .upcoming:
+            return "Upcoming Games"
+        case .favorite:
+            return "Favorites"
+        }
+    }
+    
     var title: String{
         switch self {
         case .discover:

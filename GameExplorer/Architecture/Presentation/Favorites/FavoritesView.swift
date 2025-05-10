@@ -31,14 +31,15 @@ struct FavoritesView: View {
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(Color(.background).ignoresSafeArea())
+            .background(Color.customBackground.ignoresSafeArea())
             .navigationTitle("Favorites")
-            .toolbarSetup()
+            .navigationDestination(for: Screen.self) { screen in
+                self.coordinator.build(screen)
+            }
+            .toolbarBackground(.shadowPurple, for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
             .task {
                 viewModel.loadFavorites()
-            }
-            .navigationDestination(for: Route.self) { route in
-                self.coordinator.build(route: route)
             }
         }
         .onChange(of: coordinator.path) { _, newPath in

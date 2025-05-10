@@ -13,38 +13,38 @@ struct GameDetailView: View {
     @ObservedObject var viewModel: GameDetailViewModel
     
     @State private var headerHeight: CGFloat = 300
-    @State private var scrollOffset: CGFloat = 0
     @State private var showFullDescription: Bool = false
-    @Namespace private var topID
     
     var body: some View {
         ZStack {
             if viewModel.isLoading {
                 ProgressView("Loading...")
-                    .foregroundStyle(Color(.textPrimary))
+                    .foregroundStyle(.textPrimary)
                     .padding()
             } else if let error = viewModel.errorMessage {
                 Text(error)
-                    .foregroundStyle(Color(.error))
+                    .foregroundStyle(.error)
                     .padding()
             } else {
                 GeometryReader { proxy in
                     ScrollView(showsIndicators: false) {
                         VStack(spacing: 16) {
                             header
-                                .frame(height: max(headerHeight - scrollOffset, 150))
+                                .frame(height: headerHeight)
                                 .background(Color.black)
                                 .overlay(headerOverlay, alignment: .bottomLeading)
                                 .clipped()
-                                .id(topID)
                             
                             metadataSection
                                 .padding(.horizontal)
                             
-                            if let videoUrl = viewModel.game?.videoUrl {
-                                VideoPlayer(url: videoUrl, width: UIScreen.main.bounds.width - 32)
-                                    .cornerRadius(12)
-                                    .padding(.top)
+                            if let videoId = viewModel.game?.videoId {
+                                YoutubeVideoPlayer(
+                                    videoId: videoId,
+                                    width: UIScreen.main.bounds.width - 32
+                                )
+                                .cornerRadius(12)
+                                .padding(.top)
                             }
                             
                             descriptionSection
@@ -61,16 +61,6 @@ struct GameDetailView: View {
                                 .padding(.vertical)
                                 .padding(.horizontal)
                         }
-                        .background(GeometryReader {
-                            Color.clear.preference(key: ScrollOffsetPreferenceKey.self,
-                                                   value: -$0.frame(in: .named("scroll")).origin.y)
-                        })
-                    }
-                    .coordinateSpace(name: "scroll")
-                    .onPreferenceChange(ScrollOffsetPreferenceKey.self) { value in
-                        withAnimation(.easeInOut(duration: 0.2)) {
-                            scrollOffset = value
-                        }
                     }
                 }
                 .edgesIgnoringSafeArea(.top)
@@ -80,14 +70,14 @@ struct GameDetailView: View {
                             viewModel.toggleFavorite()
                         }) {
                             Image(systemName: viewModel.isFavorite ? "heart.fill" : "heart")
-                                .foregroundColor(Color(.textPrimary))
+                                .foregroundColor(.textPrimary)
                         }
                     }
                 }
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color(.background).ignoresSafeArea())
+        .background(Color.customBackground.ignoresSafeArea())
     }
     
     private var header: some View {
@@ -111,11 +101,11 @@ struct GameDetailView: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(viewModel.game?.name ?? "")
                     .font(.largeTitle.bold())
-                    .foregroundColor(Color(.textPrimary))
+                    .foregroundColor(.textPrimary)
                 
                 Text(viewModel.game?.companies.first ?? "")
                     .font(.subheadline)
-                    .foregroundColor(Color(.textPrimary).opacity(0.8))
+                    .foregroundColor(.textPrimary.opacity(0.8))
             }
                 .padding(),
             alignment: .bottomLeading
@@ -126,17 +116,17 @@ struct GameDetailView: View {
         HStack(spacing: 4) {
             Text("Release:")
                 .font(.subheadline)
-                .foregroundColor(Color(.textPrimary))
+                .foregroundColor(.textPrimary)
             
             Text(viewModel.game?.releaseDate ?? Date(), style: .date)
                 .font(.subheadline)
-                .foregroundStyle(Color(.textSecondary))
+                .foregroundStyle(.textSecondary)
             
             Spacer()
             
             Label("\(viewModel.game?.rating ?? "0")", systemImage: "star.fill")
                 .font(.subheadline.bold())
-                .foregroundStyle(Color(.textPrimary))
+                .foregroundStyle(.textPrimary)
         }
     }
     
@@ -144,14 +134,14 @@ struct GameDetailView: View {
         VStack(alignment: .leading, spacing: 8) {
             Text(viewModel.game?.summary ?? "")
                 .font(.body)
-                .foregroundColor(Color(.textSecondary))
+                .foregroundColor(.textSecondary)
                 .lineLimit(showFullDescription ? nil : 5)
                 .multilineTextAlignment(.leading)
                 .animation(.easeInOut, value: showFullDescription)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .overlay(
                     LinearGradient(
-                        gradient: Gradient(colors: [.clear, Color(.background)]),
+                        gradient: Gradient(colors: [.clear, .customBackground]),
                         startPoint: .top,
                         endPoint: .bottom
                     )
@@ -169,7 +159,7 @@ struct GameDetailView: View {
                 HStack(spacing: 4) {
                     Text(showFullDescription ? "Show less" : "Read more")
                         .font(.caption)
-                        .foregroundColor(Color(.textPrimary))
+                        .foregroundColor(.textPrimary)
 
                     ZStack {
                         Image(systemName: "chevron.down")
@@ -192,7 +182,7 @@ struct GameDetailView: View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Genres")
                 .font(.headline)
-                .foregroundColor(Color(.textPrimary))
+                .foregroundColor(.textPrimary)
                 .padding(.horizontal)
             
             ScrollView(.horizontal, showsIndicators: false) {
@@ -202,9 +192,9 @@ struct GameDetailView: View {
                             .font(.caption.bold())
                             .padding(.horizontal, 12)
                             .padding(.vertical, 8)
-                            .background(Color(.highlightPurple).opacity(0.5))
+                            .background(.highlightPurple.opacity(0.5))
                             .clipShape(Capsule())
-                            .foregroundColor(Color(.textPrimary))
+                            .foregroundColor(.textPrimary)
                     }
                 }
                 .padding(.horizontal)
@@ -216,7 +206,7 @@ struct GameDetailView: View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Screenshots (\(viewModel.game?.screenshotUrls.count ?? 0))")
                 .font(.headline)
-                .foregroundColor(Color(.textPrimary))
+                .foregroundColor(.textPrimary)
                 .padding(.horizontal)
             
             ScrollView(.horizontal, showsIndicators: false) {
@@ -244,29 +234,21 @@ struct GameDetailView: View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Platforms")
                 .font(.headline)
-                .foregroundColor(Color(.textPrimary))
+                .foregroundColor(.textPrimary)
             
             Text(viewModel.game?.platforms.joined(separator: ", ") ?? "")
-                .foregroundColor(Color(.textSecondary))
+                .foregroundColor(.textSecondary)
             
             Divider()
-                .foregroundStyle(Color(.shadowPurple))
+                .foregroundStyle(.shadowPurple)
             
             Text("Companies Involved")
                 .font(.headline)
-                .foregroundColor(Color(.textPrimary))
+                .foregroundColor(.textPrimary)
             
             Text(viewModel.game?.companies.joined(separator: ", ") ?? "")
-                .foregroundColor(Color(.textSecondary))
+                .foregroundColor(.textSecondary)
         }
-    }
-}
-
-// MARK: - PreferenceKey for scroll tracking
-private struct ScrollOffsetPreferenceKey: PreferenceKey {
-    static var defaultValue: CGFloat = 0
-    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
-        value = nextValue()
     }
 }
 

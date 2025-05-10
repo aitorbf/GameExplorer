@@ -18,17 +18,17 @@ struct UpcomingGameCard: View {
 
     var body: some View {
         ZStack {
-            if let videoUrl = game.videoUrl, playVideo {
-                VideoPlayer(url: videoUrl, width: contentSize.width)
+            if let videoId = game.videoId, playVideo {
+                YoutubeVideoPlayer(videoId: videoId, width: contentSize.width)
             } else {
                 gameCover
                 gameInfo
             }
         }
-        .background(Color(.background))
+        .background(.customBackground)
         .cornerRadius(12)
-        .shadow(color: Color(.shadowBlue), radius: 5, x: 5, y: 5)
-        .shadow(color: Color(.shadowPurple), radius: 5, x: -5, y: -5)
+        .shadow(color: .shadowBlue, radius: 5, x: 5, y: 5)
+        .shadow(color: .shadowPurple, radius: 5, x: -5, y: -5)
         .onGeometryChange(for: CGSize.self) { proxy in
             proxy.size
         } action: {
@@ -45,17 +45,17 @@ struct UpcomingGameCard: View {
                     .clipped()
             } placeholder: {
                 Rectangle()
-                    .fill(Color(.background).opacity(0.3))
+                    .fill(.customBackground.opacity(0.3))
             }
             
             Image(systemName: "play.fill")
                 .resizable()
-                .foregroundColor(Color(.textPrimary))
+                .foregroundColor(.textPrimary)
                 .frame(width: 24, height: 24)
                 .padding()
                 .background {
                     RoundedRectangle(cornerRadius: 12)
-                        .foregroundStyle(Color(.surface))
+                        .foregroundStyle(.surface)
                 }
                 .opacity(0.8)
         }
@@ -68,12 +68,13 @@ struct UpcomingGameCard: View {
             Spacer()
             
             HStack(spacing: 16) {
-                TextMarquee(
-                    text: AttributedString(game.name),
-                    font: .headline,
-                    startDelay: marqueeDelay
+                Marquee(
+                    text: game.name,
+                    font: UIFont.preferredFont(from: .headline),
+                    gradientEffect: true,
+                    gradientColor: .surface.opacity(0.9)
                 )
-                .foregroundStyle(Color(.textPrimary))
+                .foregroundStyle(.textPrimary)
                 
                 Spacer()
                 
@@ -82,7 +83,7 @@ struct UpcomingGameCard: View {
                     .foregroundStyle(Color.textSecondary)
             }
             .padding(16)
-            .background(Color(.surface).opacity(0.9))
+            .background(.surface.opacity(0.9))
         }
     }
 }

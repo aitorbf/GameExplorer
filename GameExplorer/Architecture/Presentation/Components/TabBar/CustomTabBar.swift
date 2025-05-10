@@ -31,7 +31,7 @@ struct CustomTabBar: View {
             .padding(6)
         }
         .frame(height: 70)
-        .background(Color(.highlightPurple))
+        .background(.highlightPurple)
         .cornerRadius(35)
         .padding(.horizontal, 26)
     }
@@ -42,18 +42,18 @@ struct CustomTabBar: View {
             Image(systemName: imageName)
                 .resizable()
                 .renderingMode(.template)
-                .foregroundColor(isActive ? Color(.textPrimary) : Color(.shadowPurple))
+                .foregroundColor(isActive ? .textPrimary : .shadowPurple)
                 .scaledToFit()
                 .frame(height: 20)
             if isActive {
                 Text(title)
                     .font(.subheadline)
-                    .foregroundColor(isActive ? Color(.textPrimary) : Color(.shadowPurple))
+                    .foregroundColor(isActive ? .textPrimary : .shadowPurple)
             }
             Spacer()
         }
         .frame(maxWidth: isActive ? .infinity : 60, maxHeight: 60)
-        .background(isActive ? Color(.shadowPurple) : .clear)
+        .background(isActive ? .shadowPurple : .clear)
         .cornerRadius(30)
     }
 }

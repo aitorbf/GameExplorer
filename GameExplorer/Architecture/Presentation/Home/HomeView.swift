@@ -1,5 +1,5 @@
 //
-//  RootView.swift
+//  HomeView.swift
 //  GameExplorer
 //
 //  Created by Aitor Baragaño Fernández on 10/4/25.
@@ -7,13 +7,13 @@
 
 import SwiftUI
 
-struct RootView: View {
+struct HomeView: View {
     
-    @StateObject var discoverViewModel = DIContainer.shared.discoverViewModel()
-    @StateObject var upcomingGamesViewModel = DIContainer.shared.upcomingGamesViewModel()
-    @StateObject var favoritesViewModel = DIContainer.shared.favoritesViewModel()
+    @StateObject var discoverViewModel: DiscoverViewModel
+    @StateObject var upcomingGamesViewModel: UpcomingGamesViewModel
+    @StateObject var favoritesViewModel: FavoritesViewModel
     
-    @StateObject private var coordinator: Coordinator = Coordinator()
+    @EnvironmentObject private var appCoordinator: AppCoordinator
     @State private var selectedTab: TabItem = .upcoming
     @State private var isTabBarVisible: Bool = true
     
@@ -21,16 +21,16 @@ struct RootView: View {
         ZStack(alignment: .bottom) {
             Group {
                 DiscoverView(viewModel: discoverViewModel)
-                    .environmentObject(coordinator)
+                    .environmentObject(appCoordinator.discoverCoordinator)
                     .offset(x: selectedTab == .discover ? 0 : -UIScreen.main.bounds.width)
                     .opacity(selectedTab == .discover ? 1 : 0)
-
+                
                 UpcomingGamesView(viewModel: upcomingGamesViewModel)
                     .offset(x: selectedTab == .upcoming ? 0 : selectedTab == .favorite ? -UIScreen.main.bounds.width : UIScreen.main.bounds.width)
                     .opacity(selectedTab == .upcoming ? 1 : 0)
-
+                
                 FavoritesView(viewModel: favoritesViewModel)
-                    .environmentObject(coordinator)
+                    .environmentObject(appCoordinator.favoritesCoordinator)
                     .offset(x: selectedTab == .favorite ? 0 : UIScreen.main.bounds.width)
                     .opacity(selectedTab == .favorite ? 1 : 0)
             }
@@ -39,8 +39,7 @@ struct RootView: View {
                 .offset(y: isTabBarVisible ? 0 : 100)
                 .opacity(isTabBarVisible ? 1 : 0)
         }
-        .tint(Color(.textPrimary))
-        .background(Color(.background).ignoresSafeArea())
+        .background(Color.customBackground.ignoresSafeArea())
         .ignoresSafeArea(.keyboard, edges: .bottom)
         .animation(.easeInOut, value: isTabBarVisible)
         .environment(\.tabBarVisibility, $isTabBarVisible)
@@ -48,7 +47,7 @@ struct RootView: View {
 }
 
 #Preview {
-    RootView(
+    HomeView(
         discoverViewModel: DIContainer.mock.discoverViewModel(),
         upcomingGamesViewModel: DIContainer.mock.upcomingGamesViewModel(),
         favoritesViewModel: DIContainer.mock.favoritesViewModel()

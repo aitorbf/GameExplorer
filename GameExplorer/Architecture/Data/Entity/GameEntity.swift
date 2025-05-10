@@ -17,7 +17,7 @@ final class GameEntity: Identifiable {
     var firstReleaseDate: Date
     var rating: Double?
     var coverUrl: String?
-    var videoUrl: String?
+    var videoId: String?
     var screenshotUrls: [String]
     var genres: [String]
     var platforms: [String]
@@ -30,7 +30,7 @@ final class GameEntity: Identifiable {
         firstReleaseDate: Date,
         rating: Double? = nil,
         coverUrl: String? = nil,
-        videoUrl: String? = nil,
+        videoId: String? = nil,
         screenshotUrls: [String] = [],
         genres: [String] = [],
         platforms: [String] = [],
@@ -42,7 +42,7 @@ final class GameEntity: Identifiable {
         self.firstReleaseDate = firstReleaseDate
         self.rating = rating
         self.coverUrl = coverUrl
-        self.videoUrl = videoUrl
+        self.videoId = videoId
         self.screenshotUrls = screenshotUrls
         self.genres = genres
         self.platforms = platforms
@@ -59,7 +59,7 @@ extension GameEntity {
         releaseDate: Date = Date(),
         rating: Double? = 9.5,
         coverUrl: String? = "https://picsum.photos/seed/cover/300/450",
-        videoUrl: String? = "https://www.youtube.com/watch?v=D0UnqGm_miA",
+        videoId: String? = "D0UnqGm_miA",
         screenshotUrls: [String] = [
             "https://picsum.photos/seed/screenshot1/600/400",
             "https://picsum.photos/seed/screenshot2/600/400",
@@ -89,7 +89,7 @@ extension GameEntity {
             firstReleaseDate: releaseDate,
             rating: rating,
             coverUrl: coverUrl,
-            videoUrl: videoUrl,
+            videoId: videoId,
             screenshotUrls: screenshotUrls,
             genres: genres,
             platforms: platforms,

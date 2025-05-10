@@ -16,7 +16,7 @@ struct Game: Identifiable, Equatable, Hashable {
     let releaseDate: Date
     let rating: String
     let coverUrl: URL?
-    let videoUrl: URL?
+    let videoId: String?
     let screenshotUrls: [URL]
     let genres: [String]
     let platforms: [String]
@@ -31,7 +31,7 @@ struct Game: Identifiable, Equatable, Hashable {
             releaseDate: entity.firstReleaseDate,
             rating: String(format: "%.1f", (entity.rating ?? 0.0) / 10),
             coverUrl: URL(string: entity.coverUrl ?? ""),
-            videoUrl: URL(string: entity.videoUrl ?? ""),
+            videoId: entity.videoId,
             screenshotUrls: entity.screenshotUrls.compactMap { URL(string: $0) },
             genres: entity.genres,
             platforms: entity.platforms,
@@ -47,7 +47,7 @@ struct Game: Identifiable, Equatable, Hashable {
                 firstReleaseDate: releaseDate,
                 rating: Double(rating).map { $0 * 10 },
                 coverUrl: coverUrl?.absoluteString,
-                videoUrl: videoUrl?.absoluteString,
+                videoId: videoId,
                 screenshotUrls: screenshotUrls.map { $0.absoluteString },
                 genres: genres,
                 platforms: platforms,
@@ -65,7 +65,7 @@ extension Game {
         releaseDate: Date = Date(),
         rating: String = "9.5",
         coverUrl: URL? = URL(string: "https://picsum.photos/seed/cover/300/450"),
-        videoUrl: URL? = URL(string: "https://www.youtube.com/watch?v=D0UnqGm_miA"),
+        videoId: String? = "=D0UnqGm_miA",
         screenshotUrls: [URL] = [
             URL(string: "https://picsum.photos/seed/screenshot1/600/400")!,
             URL(string: "https://picsum.photos/seed/screenshot2/600/400")!
@@ -95,7 +95,7 @@ extension Game {
             releaseDate: releaseDate,
             rating: rating,
             coverUrl: coverUrl,
-            videoUrl: videoUrl,
+            videoId: videoId,
             screenshotUrls: screenshotUrls,
             genres: genres,
             platforms: platforms,
