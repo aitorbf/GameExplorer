@@ -57,6 +57,7 @@ final class GameDetailViewModel: ObservableObject {
         
         do {
             try toggleFavoriteGameUseCase.execute(game: game)
+            AppEventCenter.shared.send(.favoritesUpdated)
             isFavorite.toggle()
         } catch {
             print("Failed to toggle favorite game: \(error.localizedDescription)")

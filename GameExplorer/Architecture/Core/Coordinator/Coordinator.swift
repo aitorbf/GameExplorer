@@ -10,7 +10,6 @@ import SwiftUI
 
 enum Screen: Identifiable, Hashable {
     
-    case home
     case gameDetail(gameId: String)
     
     var id: Self { return self }
@@ -23,21 +22,6 @@ protocol CoordinatorProtocol: ObservableObject {
     func push(_ screen:  Screen)
     func pop()
     func popToRoot()
-}
-
-final class AppCoordinator: ObservableObject {
-    
-    let discoverCoordinator: Coordinator = Coordinator()
-    let favoritesCoordinator: Coordinator = Coordinator()
-    
-    @MainActor
-    func buildHomeScreen() -> some View {
-        HomeView(
-            discoverViewModel: DIContainer.shared.discoverViewModel(),
-            upcomingGamesViewModel: DIContainer.shared.upcomingGamesViewModel(),
-            favoritesViewModel: DIContainer.shared.favoritesViewModel()
-        )
-    }
 }
 
 final class Coordinator: CoordinatorProtocol {
@@ -63,8 +47,6 @@ final class Coordinator: CoordinatorProtocol {
             GameDetailView(
                 viewModel: DIContainer.shared.gameDetailViewModel(gameId: gameId)
             )
-        default:
-            EmptyView()
         }
     }
 }

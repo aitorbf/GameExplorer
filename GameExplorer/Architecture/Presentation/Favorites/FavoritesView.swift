@@ -91,6 +91,11 @@ struct FavoritesView: View {
         .onChange(of: coordinator.path) { _, newPath in
             isTabBarVisible.wrappedValue = newPath.isEmpty
         }
+        .onReceive(AppEventCenter.shared.eventPublisher) { event in
+            if event == .favoritesUpdated {
+                viewModel.loadFavorites()
+            }
+        }
     }
     
     private var zoomControls: some View {
