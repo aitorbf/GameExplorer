@@ -47,7 +47,7 @@ final class IGDBClient {
         
         let wrapper = IGDBWrapper(clientID: clientID ?? "", accessToken: accessToken)
         var query = APICalypse()
-            .fields(fields: "name,first_release_date,cover.image_id,videos.video_id,hypes")
+            .fields(fields: "name,first_release_date,cover.image_id,videos.video_id,involved_companies.company.name,total_rating,hypes")
             .limit(value: Int32(limit))
             .offset(value: Int32(offset))
         

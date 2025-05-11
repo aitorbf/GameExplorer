@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import AVKit
+import Kingfisher
 
 struct GameDetailView: View {
     
@@ -81,14 +81,13 @@ struct GameDetailView: View {
     }
     
     private var header: some View {
-        AsyncImage(url: viewModel.game?.coverUrl) { image in
-            image
-                .resizable()
-                .scaledToFill()
-        } placeholder: {
-            Rectangle()
-                .fill(Color.gray.opacity(0.3))
-        }
+        KFImage.url(viewModel.game?.coverUrl)
+            .placeholder {
+                Rectangle()
+                    .fill(.shadowPurple.opacity(0.3))
+            }
+            .resizable()
+            .scaledToFill()
     }
     
     private var headerOverlay: some View {
@@ -212,17 +211,16 @@ struct GameDetailView: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 16) {
                     ForEach(viewModel.game?.screenshotUrls ?? [], id: \.self) { url in
-                        AsyncImage(url: url) { image in
-                            image
-                                .resizable()
-                                .scaledToFill()
-                        } placeholder: {
-                            Rectangle()
-                                .fill(Color.gray.opacity(0.2))
-                        }
-                        .frame(width: 250, height: 140)
-                        .clipped()
-                        .cornerRadius(10)
+                        KFImage.url(url)
+                            .placeholder {
+                                Rectangle()
+                                    .fill(.shadowPurple.opacity(0.3))
+                            }
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 250, height: 140)
+                            .clipped()
+                            .cornerRadius(10)
                     }
                 }
                 .padding(.horizontal)

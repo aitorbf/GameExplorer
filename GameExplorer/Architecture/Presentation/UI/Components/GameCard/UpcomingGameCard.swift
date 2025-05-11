@@ -7,6 +7,7 @@
 
 
 import SwiftUI
+import Kingfisher
 
 struct UpcomingGameCard: View {
     
@@ -38,15 +39,14 @@ struct UpcomingGameCard: View {
     
     var gameCover: some View {
         ZStack {
-            AsyncImage(url: game.coverUrl) { image in
-                image
-                    .resizable()
-                    .scaledToFill()
-                    .clipped()
-            } placeholder: {
-                Rectangle()
-                    .fill(.customBackground.opacity(0.3))
-            }
+            KFImage.url(game.coverUrl)
+                .placeholder {
+                    Rectangle()
+                        .fill(.customBackground.opacity(0.3))
+                }
+                .resizable()
+                .scaledToFill()
+                .clipped()
             
             Image(systemName: "play.fill")
                 .resizable()
@@ -59,7 +59,7 @@ struct UpcomingGameCard: View {
                 }
                 .opacity(0.8)
         }
-        .frame(height: 200)
+        .frame(height: 220)
         .clipped()
     }
     

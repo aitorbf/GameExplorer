@@ -29,7 +29,7 @@ struct DiscoverView: View {
                     ScrollView(showsIndicators: false) {
                         LazyVStack {
                             ForEach(Array(viewModel.games.enumerated()), id: \.element.id) { index, game in
-                                SearchGameCard(game: game)
+                                ListGameCard(game: game)
                                     .padding(.horizontal)
                                     .onAppear {
                                         Task {
