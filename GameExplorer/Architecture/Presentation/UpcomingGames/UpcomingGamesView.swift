@@ -18,6 +18,12 @@ struct UpcomingGamesView: View {
             ZStack {
                 if viewModel.isLoading {
                     LoadingPulse()
+                } else if viewModel.games.isEmpty {
+                    EmptyState(
+                        title: "No Upcoming Games",
+                        message: "We couldn't find any upcoming releases at the moment. Check back later!",
+                        iconName: "calendar.badge.exclamationmark"
+                    )
                 } else if viewModel.showError {
                     ErrorView(
                         title: "Oops!",

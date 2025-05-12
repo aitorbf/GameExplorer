@@ -28,52 +28,60 @@ struct FavoritesView: View {
     var body: some View {
         NavigationStack(path: $coordinator.path) {
             ZStack {
-                Group {
-                    if viewType == .grid {
-                        StaggeredGrid(
-                            columns: gridColumns,
-                            list: viewModel.favorites,
-                            content: { favorite in
-                                GridGameCard(game: favorite, namespace: animation)
-                                    .onTapGesture {
-                                        coordinator.push(.gameDetail(gameId: favorite.gameId))
-                                    }
-                            }
-                        )
-                        .padding(.horizontal)
-                        .gesture(
-                            MagnificationGesture(minimumScaleDelta: 0)
-                                .onEnded({ value in
-                                    let threshold: CGFloat = 0.15
-                                    
-                                    if value > 1.0 + threshold {
-                                        zoomOutGrid()
-                                    } else if value < 1.0 - threshold {
-                                        zoomInGrid()
-                                    }
-                                })
-                        )
-                    } else {
-                        VStack(spacing: .zero) {
-                            ScrollView(showsIndicators: false) {
-                                VStack {
-                                    ForEach(Array(viewModel.favorites.enumerated()), id: \.element.id) { index, favorite in
-                                        ListGameCard(game: favorite, namespace: animation)
-                                            .onTapGesture {
-                                                coordinator.push(.gameDetail(gameId: favorite.gameId))
-                                            }
-                                    }
+                if viewModel.favorites.isEmpty {
+                    EmptyState(
+                        title: "No Favorites Yet",
+                        message: "Start exploring games and mark your favorites to see them here",
+                        iconName: "heart.slash"
+                    )
+                } else {
+                    Group {
+                        if viewType == .grid {
+                            StaggeredGrid(
+                                columns: gridColumns,
+                                list: viewModel.favorites,
+                                content: { favorite in
+                                    GridGameCard(game: favorite, namespace: animation)
+                                        .onTapGesture {
+                                            coordinator.push(.gameDetail(gameId: favorite.gameId))
+                                        }
                                 }
-                                .padding(.horizontal)
-                                .padding(.bottom, 32)
+                            )
+                            .padding(.horizontal)
+                            .gesture(
+                                MagnificationGesture(minimumScaleDelta: 0)
+                                    .onEnded({ value in
+                                        let threshold: CGFloat = 0.15
+                                        
+                                        if value > 1.0 + threshold {
+                                            zoomOutGrid()
+                                        } else if value < 1.0 - threshold {
+                                            zoomInGrid()
+                                        }
+                                    })
+                            )
+                        } else {
+                            VStack(spacing: .zero) {
+                                ScrollView(showsIndicators: false) {
+                                    VStack {
+                                        ForEach(Array(viewModel.favorites.enumerated()), id: \.element.id) { index, favorite in
+                                            ListGameCard(game: favorite, namespace: animation)
+                                                .onTapGesture {
+                                                    coordinator.push(.gameDetail(gameId: favorite.gameId))
+                                                }
+                                        }
+                                    }
+                                    .padding(.horizontal)
+                                    .padding(.bottom, 32)
+                                }
                             }
                         }
                     }
+                    .animation(.easeInOut, value: viewType)
+                    .animation(.easeInOut, value: gridColumns)
+                    
+                    zoomControls
                 }
-                .animation(.easeInOut, value: viewType)
-                .animation(.easeInOut, value: gridColumns)
-                
-                zoomControls
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(Color.customBackground)
@@ -82,13 +90,15 @@ struct FavoritesView: View {
                 self.coordinator.build(screen)
             }
             .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: {
-                        withAnimation {
-                            viewType = viewType == .grid ? .list : .grid
+                if !viewModel.favorites.isEmpty {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button(action: {
+                            withAnimation {
+                                viewType = viewType == .grid ? .list : .grid
+                            }
+                        }) {
+                            Image(systemName: viewType == .grid ? "rectangle.grid.1x2" : "square.grid.2x2")
                         }
-                    }) {
-                        Image(systemName: viewType == .grid ? "rectangle.grid.1x2" : "square.grid.2x2")
                     }
                 }
             }

@@ -19,6 +19,18 @@ struct DiscoverView: View {
             VStack(spacing: .zero) {
                 if viewModel.isLoading && viewModel.games.isEmpty {
                     LoadingPulse()
+                } else if viewModel.searchQuery.isEmpty && viewModel.games.isEmpty {
+                    EmptyState(
+                        title: "Search for Games",
+                        message: "Start typing to discover new titles",
+                        iconName: "gamecontroller"
+                    )
+                } else if !viewModel.searchQuery.isEmpty && viewModel.games.isEmpty {
+                    EmptyState(
+                        title: "No Results",
+                        message: "We couldn't find any games matching \"\(viewModel.searchQuery)\". Try a different keyword",
+                        iconName: "magnifyingglass"
+                    )
                 } else if viewModel.showError {
                     ErrorView(
                         title: "Oops!",
