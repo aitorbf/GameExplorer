@@ -34,21 +34,31 @@ struct FavoritesView: View {
                             columns: gridColumns,
                             list: viewModel.favorites,
                             content: { favorite in
-                                GridGameCard(game: favorite)
-                                    .matchedGeometryEffect(id: favorite.gameId, in: animation)
+                                GridGameCard(game: favorite, namespace: animation)
                                     .onTapGesture {
                                         coordinator.push(.gameDetail(gameId: favorite.gameId))
                                     }
                             }
                         )
                         .padding(.horizontal)
+                        .gesture(
+                            MagnificationGesture(minimumScaleDelta: 0)
+                                .onEnded({ value in
+                                    let threshold: CGFloat = 0.15
+                                    
+                                    if value > 1.0 + threshold {
+                                        zoomOutGrid()
+                                    } else if value < 1.0 - threshold {
+                                        zoomInGrid()
+                                    }
+                                })
+                        )
                     } else {
                         VStack(spacing: .zero) {
                             ScrollView(showsIndicators: false) {
                                 VStack {
                                     ForEach(Array(viewModel.favorites.enumerated()), id: \.element.id) { index, favorite in
-                                        ListGameCard(game: favorite)
-                                            .matchedGeometryEffect(id: favorite.gameId, in: animation)
+                                        ListGameCard(game: favorite, namespace: animation)
                                             .onTapGesture {
                                                 coordinator.push(.gameDetail(gameId: favorite.gameId))
                                             }
@@ -60,13 +70,13 @@ struct FavoritesView: View {
                         }
                     }
                 }
+                .animation(.easeInOut, value: viewType)
+                .animation(.easeInOut, value: gridColumns)
                 
                 zoomControls
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(Color.customBackground)
-            .animation(.easeInOut, value: viewType)
-            .animation(.easeInOut, value: gridColumns)
             .navigationTitle("Favorites")
             .navigationDestination(for: Screen.self) { screen in
                 self.coordinator.build(screen)
@@ -97,24 +107,23 @@ struct FavoritesView: View {
             }
         }
     }
+}
+
+private extension FavoritesView {
     
-    private var zoomControls: some View {
+    var zoomControls: some View {
         VStack {
             HStack {
                 Spacer()
                 VStack( spacing: 16) {
                     Button(action: {
-                        withAnimation {
-                            gridColumns = max(gridColumns - 1, minGridColumns)
-                        }
+                        zoomOutGrid()
                     }) {
                         Image(systemName: "plus.circle")
                     }
                     
                     Button(action: {
-                        withAnimation {
-                            gridColumns = min(gridColumns + 1, maxGridColumns)
-                        }
+                        zoomInGrid()
                     }) {
                         Image(systemName: "minus.circle")
                     }
@@ -130,6 +139,18 @@ struct FavoritesView: View {
                 .opacity(viewType == .grid ? 1 : 0)
             }
             Spacer()
+        }
+    }
+    
+    func zoomInGrid() {
+        withAnimation {
+            gridColumns = min(gridColumns + 1, maxGridColumns)
+        }
+    }
+    
+    func zoomOutGrid() {
+        withAnimation {
+            gridColumns = max(gridColumns - 1, minGridColumns)
         }
     }
 }

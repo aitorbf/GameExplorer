@@ -11,6 +11,7 @@ import Kingfisher
 struct GridGameCard: View {
     
     let game: Game
+    var namespace: Namespace.ID?
     
     var body: some View {
         KFImage.url(game.coverUrl)
@@ -21,6 +22,10 @@ struct GridGameCard: View {
             .resizable()
             .scaledToFit()
             .cornerRadius(12)
+            .ifLet(namespace) { view, namespace in
+                view
+                    .matchedGeometryEffect(id: game.gameId, in: namespace)
+            }
     }
 }
 

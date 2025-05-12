@@ -12,6 +12,7 @@ import Kingfisher
 struct ListGameCard: View {
     
     let game: Game
+    var namespace: Namespace.ID?
 
     var body: some View {
         HStack(spacing: 12) {
@@ -24,6 +25,10 @@ struct ListGameCard: View {
                 .scaledToFit()
                 .frame(maxWidth: 150)
                 .cornerRadius(12, corners: [.topLeft, .bottomLeft])
+                .ifLet(namespace) { view, namespace in
+                    view
+                        .matchedGeometryEffect(id: game.gameId, in: namespace)
+                }
             
             VStack(alignment: .leading, spacing: 4) {
                 Text(game.name)

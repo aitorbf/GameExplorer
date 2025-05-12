@@ -62,11 +62,12 @@ struct StaggeredGrid<Content: View, T: Identifiable>: View where T: Hashable {
 }
 
 #Preview {
+    @Previewable @Namespace var animation
     StaggeredGrid(
         columns: 2,
         list: [Game.mock(), Game.mock(), Game.mock(), Game.mock(), Game.mock(), Game.mock()],
         content: { game in
-            GridGameCard(game: game)
+            GridGameCard(game: game, namespace: animation)
         }
     )
 }
