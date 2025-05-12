@@ -34,7 +34,7 @@ struct HomeView: View {
                     .offset(x: selectedTab == .favorite ? 0 : UIScreen.main.bounds.width)
                     .opacity(selectedTab == .favorite ? 1 : 0)
             }
-
+            
             CustomTabBar(selectedTab: $selectedTab)
                 .offset(y: isTabBarVisible ? 0 : 100)
                 .opacity(isTabBarVisible ? 1 : 0)
@@ -43,6 +43,7 @@ struct HomeView: View {
         .ignoresSafeArea(.keyboard, edges: .bottom)
         .animation(.easeInOut, value: isTabBarVisible)
         .environment(\.tabBarVisibility, $isTabBarVisible)
+        
     }
 }
 
@@ -52,5 +53,5 @@ struct HomeView: View {
         upcomingGamesViewModel: DIContainer.mock.upcomingGamesViewModel(),
         favoritesViewModel: DIContainer.mock.favoritesViewModel()
     )
-            
+    
 }

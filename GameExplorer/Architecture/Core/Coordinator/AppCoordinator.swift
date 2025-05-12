@@ -14,10 +14,14 @@ final class AppCoordinator: ObservableObject {
     
     @MainActor
     func buildHomeScreen() -> some View {
-        HomeView(
-            discoverViewModel: DIContainer.shared.discoverViewModel(),
-            upcomingGamesViewModel: DIContainer.shared.upcomingGamesViewModel(),
-            favoritesViewModel: DIContainer.shared.favoritesViewModel()
-        )
+        ZStack {
+            HomeView(
+                discoverViewModel: DIContainer.shared.discoverViewModel(),
+                upcomingGamesViewModel: DIContainer.shared.upcomingGamesViewModel(),
+                favoritesViewModel: DIContainer.shared.favoritesViewModel()
+            )
+            
+            SplashScreen()
+        }
     }
 }
