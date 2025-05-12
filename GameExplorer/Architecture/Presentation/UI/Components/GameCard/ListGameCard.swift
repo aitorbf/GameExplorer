@@ -20,6 +20,12 @@ struct ListGameCard: View {
                 .placeholder {
                     Rectangle()
                         .fill(.shadowPurple.opacity(0.3))
+                        .overlay {
+                            Image("Gamepad")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 50, height: 50)
+                        }
                 }
                 .resizable()
                 .scaledToFit()
