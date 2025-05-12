@@ -55,11 +55,19 @@ struct GameDetailView: View {
                     }
                     .opacity(viewModel.isLoading ? 0 : 1)
                     
-                    ProgressView("Loading...")
-                        .foregroundStyle(.textPrimary)
-                        .background(Color.customBackground)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .padding()
+                    ErrorView(
+                        title: "Oops!",
+                        message: "Something went wrong. Please try again.",
+                        iconName: "exclamationmark.triangle",
+                        retryAction: {
+                            Task {
+                                await viewModel.loadGame()
+                            }
+                        }
+                    )
+                    .opacity(viewModel.showError ? 1 : 0)
+                    
+                    LoadingPulse()
                         .opacity(viewModel.isLoading ? 1 : 0)
                 }
                 .overlay(alignment: .top) {

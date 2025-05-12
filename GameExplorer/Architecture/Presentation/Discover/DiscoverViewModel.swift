@@ -13,8 +13,8 @@ final class DiscoverViewModel: ObservableObject {
     
     @Published var searchQuery: String = ""
     @Published var games: [Game] = []
-    @Published var isLoading: Bool = false
-    @Published var errorMessage: String?
+    @Published var isLoading: Bool = true
+    @Published var showError: Bool = false
     
     private let searchGamesUseCase: SearchGamesUseCase
     private let limit: Int = 50
@@ -44,7 +44,7 @@ final class DiscoverViewModel: ObservableObject {
         
         isLoading = true
         isFetching = true
-        errorMessage = nil
+        showError = false
         
         do {
             let newGames = try await searchGamesUseCase.execute(searchQuery: searchQuery, offset: offset, limit: limit)
@@ -54,7 +54,7 @@ final class DiscoverViewModel: ObservableObject {
             isLoading = false
             isFetching = false
         } catch {
-            errorMessage = "Failed to load games: \(error.localizedDescription)"
+            showError = true
             isLoading = false
             isFetching = false
         }
@@ -93,7 +93,7 @@ private extension DiscoverViewModel {
         isLoading = false
         isFetching = false
         canFetchMore = true
-        errorMessage = nil
+        showError = false
     }
 }
 

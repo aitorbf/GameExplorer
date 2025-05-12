@@ -17,13 +17,18 @@ struct UpcomingGamesView: View {
         NavigationView {
             ZStack {
                 if viewModel.isLoading {
-                    ProgressView("Loading upcoming games...")
-                        .foregroundStyle(.textPrimary)
-                        .padding()
-                } else if let error = viewModel.errorMessage {
-                    Text(error)
-                        .foregroundStyle(.error)
-                        .padding()
+                    LoadingPulse()
+                } else if viewModel.showError {
+                    ErrorView(
+                        title: "Oops!",
+                        message: "Something went wrong. Please try again.",
+                        iconName: "exclamationmark.triangle",
+                        retryAction: {
+                            Task {
+                                await viewModel.loadGames()
+                            }
+                        }
+                    )
                 } else {
                     ScrollView(showsIndicators: false) {
                         LazyVStack(spacing: 32) {

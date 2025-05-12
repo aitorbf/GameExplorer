@@ -18,13 +18,18 @@ struct DiscoverView: View {
         NavigationStack(path: $coordinator.path) {
             VStack(spacing: .zero) {
                 if viewModel.isLoading && viewModel.games.isEmpty {
-                    ProgressView("Searching...")
-                        .foregroundStyle(.textPrimary)
-                        .padding()
-                } else if let error = viewModel.errorMessage {
-                    Text(error)
-                        .foregroundStyle(.error)
-                        .padding()
+                    LoadingPulse()
+                } else if viewModel.showError {
+                    ErrorView(
+                        title: "Oops!",
+                        message: "Something went wrong. Please try again.",
+                        iconName: "exclamationmark.triangle",
+                        retryAction: {
+                            Task {
+                                await viewModel.search()
+                            }
+                        }
+                    )
                 } else {
                     ScrollView(showsIndicators: false) {
                         LazyVStack {

@@ -14,7 +14,7 @@ final class GameDetailViewModel: ObservableObject {
     @Published var game: Game?
     @Published var isFavorite: Bool = false
     @Published var isLoading: Bool = false
-    @Published var errorMessage: String?
+    @Published var showError: Bool = false
 
     private let fetchGameUseCase: FetchGameUseCase
     private let isGameFavoriteUseCase: IsGameFavoriteUseCase
@@ -39,14 +39,14 @@ final class GameDetailViewModel: ObservableObject {
     @MainActor
     func loadGame() async {
         isLoading = true
-        errorMessage = nil
+        showError = false
         
         do {
             let result = try await fetchGameUseCase.execute(gameId: gameId)
             game = result
             isFavorite = isGameFavoriteUseCase.execute(gameId: gameId)
         } catch {
-            errorMessage = "Failed to load game with id \(gameId): \(error.localizedDescription)"
+            showError = true
         }
         
         isLoading = false

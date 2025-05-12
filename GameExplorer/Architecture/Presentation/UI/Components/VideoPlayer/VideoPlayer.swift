@@ -25,7 +25,8 @@ struct YoutubeVideoPlayer: View {
             ) { state in
                 switch state {
                 case .idle:
-                    ProgressView().foregroundStyle(Color.textSecondary)
+                    ProgressView()
+                        .foregroundStyle(Color.textPrimary)
                 default:
                     EmptyView()
                 }

@@ -11,7 +11,7 @@ import SwiftUI
 final class UpcomingGamesViewModel: ObservableObject {
     @Published var games: [Game] = []
     @Published var isLoading: Bool = false
-    @Published var errorMessage: String?
+    @Published var showError: Bool = false
 
     private let fetchUpcomingGamesUseCase: FetchUpcomingGamesUseCase
 
@@ -26,13 +26,13 @@ final class UpcomingGamesViewModel: ObservableObject {
     @MainActor
     func loadGames() async {
         isLoading = true
-        errorMessage = nil
+        showError = false
         
         do {
             let result = try await fetchUpcomingGamesUseCase.execute()
             games = result
         } catch {
-            errorMessage = "Failed to load games: \(error.localizedDescription)"
+            showError = true
         }
         
         isLoading = false
