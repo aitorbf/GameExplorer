@@ -15,7 +15,6 @@ struct UpcomingGameCard: View {
     let playVideo: Bool
     
     @State private var contentSize: CGSize = .zero
-    private let marqueeDelay: Double = 1.2
 
     var body: some View {
         ZStack {
