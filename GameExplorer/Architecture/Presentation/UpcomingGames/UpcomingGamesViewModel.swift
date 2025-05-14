@@ -10,7 +10,7 @@ import SwiftUI
 
 final class UpcomingGamesViewModel: ObservableObject {
     @Published var games: [Game] = []
-    @Published var isLoading: Bool = false
+    @Published var isLoading: Bool = true
     @Published var showError: Bool = false
 
     private let fetchUpcomingGamesUseCase: FetchUpcomingGamesUseCase
@@ -25,7 +25,6 @@ final class UpcomingGamesViewModel: ObservableObject {
     
     @MainActor
     func loadGames() async {
-        isLoading = true
         showError = false
         
         do {

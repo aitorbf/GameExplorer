@@ -14,7 +14,6 @@ struct LoadingPulse: View {
     var body: some View {
         ZStack {
             Color.customBackground
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
             
             Image("Gamepad")
                 .resizable()
@@ -27,6 +26,7 @@ struct LoadingPulse: View {
                     value: animate
                 )
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .onAppear {
             animate = true
         }
