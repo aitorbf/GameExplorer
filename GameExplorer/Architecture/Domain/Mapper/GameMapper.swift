@@ -11,8 +11,7 @@ struct GameMapper {
     
     static func map(_ entity: GameEntity) -> Game {
         .init(
-            id: UUID(),
-            gameId: entity.id,
+            id: entity.id,
             name: entity.name,
             summary: entity.summary,
             releaseDate: entity.firstReleaseDate,

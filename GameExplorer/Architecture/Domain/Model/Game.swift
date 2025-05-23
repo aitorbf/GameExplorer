@@ -9,8 +9,7 @@ import Foundation
 
 struct Game: Identifiable, Equatable, Hashable {
     
-    let id: UUID
-    let gameId: String
+    let id: String
     let name: String
     let summary: String?
     let releaseDate: Date
@@ -55,8 +54,7 @@ extension Game {
         ]
     ) -> Self {
         .init(
-            id: UUID(),
-            gameId: id,
+            id: id,
             name: name,
             summary: summary,
             releaseDate: releaseDate,

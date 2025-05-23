@@ -20,8 +20,8 @@ struct ToggleFavoriteGameUseCaseImpl: ToggleFavoriteGameUseCase {
     }
 
     func execute(game: Game) throws {
-        if repository.isFavorite(game.gameId) {
-            try repository.remove(game.gameId)
+        if repository.isFavorite(game.id) {
+            try repository.remove(game.id)
         } else {
             try repository.add(game)
         }

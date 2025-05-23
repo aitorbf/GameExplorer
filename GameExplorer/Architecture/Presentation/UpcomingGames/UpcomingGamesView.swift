@@ -11,7 +11,7 @@ struct UpcomingGamesView: View {
     
     @ObservedObject var viewModel: UpcomingGamesViewModel
     
-    @State private var selectedGameId: UUID?
+    @State private var selectedGameId: String?
     // Large title navigation view height
     private let largeNavigationBarHeight: CGFloat = 96
     // Inline title navigation view height
@@ -75,10 +75,7 @@ struct UpcomingGamesView: View {
                 }
             }
             onRefresh: {
-                Task {
-                    try? await Task.sleep(for: .seconds(1))
-                    await viewModel.loadGames()
-                }
+                await viewModel.loadGames()
             }
             .ignoresSafeArea(.container, edges: .top)
         }

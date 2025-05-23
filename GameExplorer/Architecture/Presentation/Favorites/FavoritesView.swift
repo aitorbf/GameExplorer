@@ -43,7 +43,7 @@ struct FavoritesView: View {
                                 content: { favorite in
                                     GridGameCard(game: favorite, namespace: animation)
                                         .onTapGesture {
-                                            coordinator.push(.gameDetail(gameId: favorite.gameId))
+                                            coordinator.push(.gameDetail(gameId: favorite.id))
                                         }
                                 }
                             )
@@ -67,7 +67,7 @@ struct FavoritesView: View {
                                         ForEach(Array(viewModel.favorites.enumerated()), id: \.element.id) { index, favorite in
                                             ListGameCard(game: favorite, namespace: animation)
                                                 .onTapGesture {
-                                                    coordinator.push(.gameDetail(gameId: favorite.gameId))
+                                                    coordinator.push(.gameDetail(gameId: favorite.id))
                                                 }
                                         }
                                     }

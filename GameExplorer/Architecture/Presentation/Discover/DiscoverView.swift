@@ -54,7 +54,7 @@ struct DiscoverView: View {
                                         }
                                     }
                                     .onTapGesture {
-                                        coordinator.push(.gameDetail(gameId: game.gameId))
+                                        coordinator.push(.gameDetail(gameId: game.id))
                                     }
                             }
                         }

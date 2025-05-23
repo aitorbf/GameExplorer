@@ -33,7 +33,7 @@ struct ListGameCard: View {
                 .cornerRadius(12, corners: [.topLeft, .bottomLeft])
                 .ifLet(namespace) { view, namespace in
                     view
-                        .matchedGeometryEffect(id: game.gameId, in: namespace)
+                        .matchedGeometryEffect(id: game.id, in: namespace)
                 }
             
             VStack(alignment: .leading, spacing: 4) {

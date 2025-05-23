@@ -30,7 +30,7 @@ struct GridGameCard: View {
             .cornerRadius(12)
             .ifLet(namespace) { view, namespace in
                 view
-                    .matchedGeometryEffect(id: game.gameId, in: namespace)
+                    .matchedGeometryEffect(id: game.id, in: namespace)
             }
     }
 }
