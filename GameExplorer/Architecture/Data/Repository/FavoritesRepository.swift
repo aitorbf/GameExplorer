@@ -8,8 +8,7 @@
 import Foundation
 
 protocol FavoritesRepository {
-    
-    func add(_ game: GameEntity) throws
+    func add(_ game: Game) throws
     func remove(_ gameId: String) throws
     func isFavorite(_ gameId: String) -> Bool
     func getFavorites() -> [GameEntity]
@@ -24,8 +23,8 @@ final class FavoritesRepositoryImpl: FavoritesRepository {
         self.localDataSource = localDataSource
     }
     
-    func add(_ game: GameEntity) throws {
-        try localDataSource.add(game)
+    func add(_ game: Game) throws {
+        try localDataSource.add(GameEntityMapper.map(game))
     }
     
     func remove(_ gameId: String) throws {
@@ -45,3 +44,18 @@ final class FavoritesRepositoryImpl: FavoritesRepository {
     }
 }
 
+#if DEBUG
+extension FavoritesRepositoryImpl {
+    
+    @MainActor
+    static func mock(preloadedGames: [GameEntity] = []) -> FavoritesRepository {
+        let context = SwiftDataManager.test.modelContext
+        
+        preloadedGames.forEach { context.insert($0) }
+        
+        return FavoritesRepositoryImpl(
+            localDataSource: FavoritesLocalDataSourceImpl(context: context)
+        )
+    }
+}
+#endif

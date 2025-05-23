@@ -12,10 +12,6 @@ struct GameExplorerApp: App {
     
     @StateObject var appCoordinator = AppCoordinator()
     
-    init() {
-        DIContainer.initialize(context: SwiftDataManager.shared.modelContext)
-    }
-    
     var body: some Scene {
         WindowGroup {
             appCoordinator

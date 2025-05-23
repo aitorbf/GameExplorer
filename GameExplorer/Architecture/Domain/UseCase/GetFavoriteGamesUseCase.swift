@@ -7,7 +7,11 @@
 
 import Foundation
 
-struct GetFavoriteGamesUseCase {
+protocol GetFavoriteGamesUseCase {
+    func execute() -> [Game]
+}
+
+struct GetFavoriteGamesUseCaseImpl: GetFavoriteGamesUseCase {
     
     private let repository: FavoritesRepository
 
@@ -17,7 +21,7 @@ struct GetFavoriteGamesUseCase {
 
     func execute() -> [Game] {
         repository.getFavorites().map { gameEntity in
-            Game.from(entity: gameEntity)
+            GameMapper.map(gameEntity)
         }
     }
 }

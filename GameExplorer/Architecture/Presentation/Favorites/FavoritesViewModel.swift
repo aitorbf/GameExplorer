@@ -24,11 +24,10 @@ final class FavoritesViewModel: ObservableObject {
 
 #if DEBUG
 extension FavoritesViewModel {
-    @MainActor static func mock() -> FavoritesViewModel {
-        // TODO: Mock repository
-        let modelContext = SwiftDataManager.preview.modelContext
-        let getFavoriteGamesUseCase = GetFavoriteGamesUseCase(repository: FavoritesRepositoryImpl(localDataSource: FavoritesLocalDataSourceImpl(context: modelContext)))
-        return FavoritesViewModel(getFavoriteGamesUseCase: getFavoriteGamesUseCase)
+    
+    @MainActor
+    static func mock() -> FavoritesViewModel {
+        MockDIContainer.shared.favoritesViewModel()
     }
 }
 #endif

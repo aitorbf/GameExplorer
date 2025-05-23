@@ -21,39 +21,6 @@ struct Game: Identifiable, Equatable, Hashable {
     let genres: [String]
     let platforms: [String]
     let companies: [String]
-    
-    static func from(entity: GameEntity) -> Game {
-        Game(
-            id: UUID(),
-            gameId: entity.id,
-            name: entity.name,
-            summary: entity.summary,
-            releaseDate: entity.firstReleaseDate,
-            rating: String(format: "%.1f", (entity.rating ?? 0.0) / 10),
-            coverUrl: URL(string: entity.coverUrl ?? ""),
-            videoId: entity.videoId,
-            screenshotUrls: entity.screenshotUrls.compactMap { URL(string: $0) },
-            genres: entity.genres,
-            platforms: entity.platforms,
-            companies: entity.companies
-        )
-    }
-    
-    func toEntity() -> GameEntity {
-            GameEntity(
-                id: gameId,
-                name: name,
-                summary: summary,
-                firstReleaseDate: releaseDate,
-                rating: Double(rating).map { $0 * 10 },
-                coverUrl: coverUrl?.absoluteString,
-                videoId: videoId,
-                screenshotUrls: screenshotUrls.map { $0.absoluteString },
-                genres: genres,
-                platforms: platforms,
-                companies: companies
-            )
-        }
 }
 
 extension Game {
@@ -101,5 +68,20 @@ extension Game {
             platforms: platforms,
             companies: companies
         )
+    }
+    
+    static func mockList(count: Int = 10) -> [Game] {
+        (1...count).map { index in
+            Self.mock(
+                id: "\(index)",
+                name: "Game \(index)",
+                coverUrl: URL(string: "https://picsum.photos/seed/game\(index)/300/450"),
+                videoId: "video\(index)",
+                screenshotUrls: [
+                    URL(string: "https://picsum.photos/seed/screenshot\(index)-1/600/400")!,
+                    URL(string: "https://picsum.photos/seed/screenshot\(index)-2/600/400")!
+                ]
+            )
+        }
     }
 }

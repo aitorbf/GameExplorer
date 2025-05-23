@@ -7,12 +7,20 @@
 
 import Foundation
 
-struct SearchGamesUseCase {
+protocol SearchGamesUseCase {
+    func execute(searchQuery: String, offset: Int, limit: Int) async throws -> [Game]
+}
+
+struct SearchGamesUseCaseImpl: SearchGamesUseCase {
     
-    let repository: GameRepository
+    private let repository: GameRepository
+    
+    init(repository: GameRepository) {
+        self.repository = repository
+    }
 
     func execute(searchQuery: String, offset: Int, limit: Int) async throws -> [Game] {
         let gameEntities = try await repository.searchGames(searchQuery: searchQuery, offset: offset, limit: limit)
-        return gameEntities.map { Game.from(entity: $0) }
+        return gameEntities.map { GameMapper.map($0) }
     }
 }

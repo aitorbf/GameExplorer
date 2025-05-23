@@ -40,9 +40,10 @@ final class UpcomingGamesViewModel: ObservableObject {
 
 #if DEBUG
 extension UpcomingGamesViewModel {
+    
+    @MainActor
     static func mock() -> UpcomingGamesViewModel {
-        let fetchUpcomingGamesUseCase = FetchUpcomingGamesUseCase(repository: MockGameRepository())
-        return UpcomingGamesViewModel(fetchUpcomingGamesUseCase: fetchUpcomingGamesUseCase)
+        MockDIContainer.shared.upcomingGamesViewModel()
     }
 }
 #endif

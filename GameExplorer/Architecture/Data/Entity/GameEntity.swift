@@ -96,4 +96,19 @@ extension GameEntity {
             companies: companies
         )
     }
+    
+    static func mockList(count: Int = 10) -> [GameEntity] {
+        (1...count).map { index in
+            Self.mock(
+                id: "\(index)",
+                name: "Game \(index)",
+                coverUrl: "https://picsum.photos/seed/game\(index)/300/450",
+                videoId: "video\(index)",
+                screenshotUrls: [
+                    "https://picsum.photos/seed/screenshot\(index)-1/600/400",
+                    "https://picsum.photos/seed/screenshot\(index)-2/600/400"
+                ]
+            )
+        }
+    }
 }

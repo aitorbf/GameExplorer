@@ -7,13 +7,21 @@
 
 import Foundation
 
-struct FetchGameUseCase {
+protocol FetchGameUseCase {
+    func execute(gameId: String) async throws -> Game?
+}
+
+struct FetchGameUseCaseImpl: FetchGameUseCase {
     
-    let repository: GameRepository
+    private let repository: GameRepository
+    
+    init(repository: GameRepository) {
+        self.repository = repository
+    }
 
     func execute(gameId: String) async throws -> Game? {
         if let gameEntity = try await repository.fetchGame(withId: gameId) {
-            return Game.from(entity: gameEntity)
+            return GameMapper.map(gameEntity)
         }
         
         return nil

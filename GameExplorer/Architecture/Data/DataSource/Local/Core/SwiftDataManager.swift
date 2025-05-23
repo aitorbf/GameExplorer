@@ -12,10 +12,12 @@ import SwiftData
 final class SwiftDataManager {
     
     static let shared = SwiftDataManager()
-    static let preview = SwiftDataManager(inMemory: true)
+    static let test = SwiftDataManager(inMemory: true)
 
-    let modelContainer: ModelContainer
-    var modelContext: ModelContext { modelContainer.mainContext }
+    private let modelContainer: ModelContainer
+    var modelContext: ModelContext {
+        modelContainer.mainContext
+    }
 
     private init(inMemory: Bool = false) {
         let schema = Schema([GameEntity.self])
@@ -34,5 +36,15 @@ final class SwiftDataManager {
         } catch {
             fatalError("Could not create ModelContainer: \(error)")
         }
+    }
+}
+
+extension SwiftDataManager {
+    
+    static func resetTestContext() {
+        let context = SwiftDataManager.test.modelContext
+        let allGames = try? context.fetch(FetchDescriptor<GameEntity>())
+        allGames?.forEach { context.delete($0) }
+        try? context.save()
     }
 }

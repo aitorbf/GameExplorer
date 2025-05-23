@@ -1,5 +1,5 @@
 //
-//  IGDBClient.swift
+//  IGDBRemoteDataSource.swift
 //  GameExplorer
 //
 //  Created by Aitor Baragaño Fernández on 10/4/25.
@@ -8,7 +8,13 @@
 import Foundation
 import IGDB_SWIFT_API
 
-final class IGDBClient {
+protocol IGDBRemoteDataSource {
+    func fetchUpcomingGames() async throws -> [GameEntity]
+    func searchGames(searchQuery: String, offset: Int, limit: Int) async throws -> [GameEntity]
+    func fetchGame(withId id: String) async throws -> GameEntity?
+}
+
+final class IGDBRemoteDataSourceImpl: IGDBRemoteDataSource {
     private let clientID = Bundle.main.infoDictionary?["IGDB_CLIENT_ID"] as? String
     
     func fetchUpcomingGames() async throws -> [GameEntity] {
@@ -29,7 +35,7 @@ final class IGDBClient {
         return try await withCheckedThrowingContinuation { continuation in
             wrapper.games(apiCalypse: query, result: { games in
                 let gameEntities = games.map { game in
-                    GameEntityMapper.mapIGDBGame(game: game)
+                    GameEntityMapper.mapIGDBGame(game)
                 }
                 continuation.resume(returning: gameEntities)
             }, errorResponse: { error in
@@ -60,7 +66,7 @@ final class IGDBClient {
         return try await withCheckedThrowingContinuation { continuation in
             wrapper.games(apiCalypse: query, result: { games in
                 let gameEntities = games.map { game in
-                    GameEntityMapper.mapIGDBGame(game: game)
+                    GameEntityMapper.mapIGDBGame(game)
                 }
                 continuation.resume(returning: gameEntities)
             }, errorResponse: { error in
@@ -84,7 +90,7 @@ final class IGDBClient {
         return try await withCheckedThrowingContinuation { continuation in
             wrapper.games(apiCalypse: query, result: { games in
                 let gameEntity = games.first.map { game in
-                    GameEntityMapper.mapIGDBGame(game: game)
+                    GameEntityMapper.mapIGDBGame(game)
                 }
                 continuation.resume(returning: gameEntity)
             }, errorResponse: { error in

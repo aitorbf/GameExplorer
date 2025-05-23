@@ -7,7 +7,11 @@
 
 import Foundation
 
-struct ToggleFavoriteGameUseCase {
+protocol ToggleFavoriteGameUseCase {
+    func execute(game: Game) throws
+}
+
+struct ToggleFavoriteGameUseCaseImpl: ToggleFavoriteGameUseCase {
     
     private let repository: FavoritesRepository
 
@@ -19,7 +23,7 @@ struct ToggleFavoriteGameUseCase {
         if repository.isFavorite(game.gameId) {
             try repository.remove(game.gameId)
         } else {
-            try repository.add(game.toEntity())
+            try repository.add(game)
         }
     }
 }

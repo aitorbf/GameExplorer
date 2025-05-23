@@ -7,12 +7,20 @@
 
 import Foundation
 
-struct FetchUpcomingGamesUseCase {
+protocol FetchUpcomingGamesUseCase {
+    func execute() async throws -> [Game]
+}
+
+struct FetchUpcomingGamesUseCaseImpl: FetchUpcomingGamesUseCase {
     
-    let repository: GameRepository
+    private let repository: GameRepository
+    
+    init(repository: GameRepository) {
+        self.repository = repository
+    }
 
     func execute() async throws -> [Game] {
         let gameEntities: [GameEntity] = try await repository.fetchUpcomingGames()
-        return gameEntities.map { Game.from(entity: $0) }
+        return gameEntities.map { GameMapper.map($0) }
     }
 }

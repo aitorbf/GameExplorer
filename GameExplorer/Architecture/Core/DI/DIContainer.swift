@@ -9,66 +9,116 @@ import Foundation
 import SwiftData
 
 @MainActor
-final class DIContainer {
+protocol DIContainerProtocol {
+    func discoverViewModel() -> DiscoverViewModel
+    func upcomingGamesViewModel() -> UpcomingGamesViewModel
+    func favoritesViewModel() -> FavoritesViewModel
+    func gameDetailViewModel(gameId: String) -> GameDetailViewModel
+}
+
+@MainActor
+final class DIContainer: DIContainerProtocol {
     
-    static private(set) var shared: DIContainer!
-    
-    @MainActor
-    static func initialize(context: ModelContext) {
-        self.shared = DIContainer(modelContext: context)
-    }
+    static let shared: DIContainer = DIContainer()
     
     private let modelContext: ModelContext
     private let gameRepository: GameRepository
     private let favoritesRepository: FavoritesRepository
 
-    private init(
-        modelContext: ModelContext,
-        gameRepository: GameRepository = GameRepositoryImpl()
-    ) {
-        self.modelContext = modelContext
-        self.gameRepository = gameRepository
-        self.favoritesRepository = FavoritesRepositoryImpl(localDataSource: FavoritesLocalDataSourceImpl(context: modelContext))
+    private let searchGamesUseCase: SearchGamesUseCase
+    private let fetchUpcomingGamesUseCase: FetchUpcomingGamesUseCase
+    private let getFavoriteGamesUseCase: GetFavoriteGamesUseCase
+    private let fetchGameUseCase: FetchGameUseCase
+    private let isGameFavoriteUseCase: IsGameFavoriteUseCase
+    private let toggleFavoriteGameUseCase: ToggleFavoriteGameUseCase
+
+    private init() {
+        self.modelContext = SwiftDataManager.shared.modelContext
+
+        self.gameRepository = GameRepositoryImpl(remoteDataSource: IGDBRemoteDataSourceImpl())
+        self.favoritesRepository = FavoritesRepositoryImpl(
+            localDataSource: FavoritesLocalDataSourceImpl(context: modelContext)
+        )
+        
+        self.searchGamesUseCase = SearchGamesUseCaseImpl(repository: gameRepository)
+        self.fetchUpcomingGamesUseCase = FetchUpcomingGamesUseCaseImpl(repository: gameRepository)
+        self.getFavoriteGamesUseCase = GetFavoriteGamesUseCaseImpl(repository: favoritesRepository)
+        self.fetchGameUseCase = FetchGameUseCaseImpl(repository: gameRepository)
+        self.isGameFavoriteUseCase = IsGameFavoriteUseCaseImpl(repository: favoritesRepository)
+        self.toggleFavoriteGameUseCase = ToggleFavoriteGameUseCaseImpl(repository: favoritesRepository)
     }
 
     func discoverViewModel() -> DiscoverViewModel {
-        let searchGamesUseCase = SearchGamesUseCase(repository: gameRepository)
-        return DiscoverViewModel(searchGamesUseCase: searchGamesUseCase)
+        DiscoverViewModel(searchGamesUseCase: searchGamesUseCase)
     }
 
     func upcomingGamesViewModel() -> UpcomingGamesViewModel {
-        let fetchUpcomingGamesUseCase = FetchUpcomingGamesUseCase(repository: gameRepository)
-        return UpcomingGamesViewModel(fetchUpcomingGamesUseCase: fetchUpcomingGamesUseCase)
+        UpcomingGamesViewModel(fetchUpcomingGamesUseCase: fetchUpcomingGamesUseCase)
     }
     
     func favoritesViewModel() -> FavoritesViewModel {
-        let getFavoriteGamesUseCase = GetFavoriteGamesUseCase(repository: favoritesRepository)
-        return FavoritesViewModel(getFavoriteGamesUseCase: getFavoriteGamesUseCase)
+        FavoritesViewModel(getFavoriteGamesUseCase: getFavoriteGamesUseCase)
     }
     
     func gameDetailViewModel(gameId: String) -> GameDetailViewModel {
-        let fetchGameUseCase = FetchGameUseCase(repository: gameRepository)
-        let isGameFavoriteUseCase = IsGameFavoriteUseCase(repository: favoritesRepository)
-        let toggleFavoriteUseCase = ToggleFavoriteGameUseCase(repository: favoritesRepository)
-        return GameDetailViewModel(
+        GameDetailViewModel(
             gameId: gameId,
             fetchGameUseCase: fetchGameUseCase,
             isGameFavoriteUseCase: isGameFavoriteUseCase,
-            toggleFavoriteGameUseCase: toggleFavoriteUseCase
+            toggleFavoriteGameUseCase: toggleFavoriteGameUseCase
         )
     }
 }
 
-#if DEBUG
 @MainActor
-extension DIContainer {
-    @MainActor
-    static var mock: DIContainer {
-        let context = SwiftDataManager.preview.modelContext
-        return DIContainer(
-            modelContext: context,
-            gameRepository: MockGameRepository()
+final class MockDIContainer: DIContainerProtocol {
+    
+    static let shared = MockDIContainer()
+    
+    private let modelContext: ModelContext
+    private let gameRepository: GameRepository
+    private let favoritesRepository: FavoritesRepository
+
+    private let searchGamesUseCase: SearchGamesUseCase
+    private let fetchUpcomingGamesUseCase: FetchUpcomingGamesUseCase
+    private let getFavoriteGamesUseCase: GetFavoriteGamesUseCase
+    private let fetchGameUseCase: FetchGameUseCase
+    private let isGameFavoriteUseCase: IsGameFavoriteUseCase
+    private let toggleFavoriteGameUseCase: ToggleFavoriteGameUseCase
+
+    private init() {
+        
+        self.modelContext = SwiftDataManager.test.modelContext
+
+        self.gameRepository = MockGameRepository()
+        self.favoritesRepository = FavoritesRepositoryImpl.mock(preloadedGames: GameEntity.mockList())
+
+        self.searchGamesUseCase = SearchGamesUseCaseImpl(repository: gameRepository)
+        self.fetchUpcomingGamesUseCase = FetchUpcomingGamesUseCaseImpl(repository: gameRepository)
+        self.getFavoriteGamesUseCase = GetFavoriteGamesUseCaseImpl(repository: favoritesRepository)
+        self.fetchGameUseCase = FetchGameUseCaseImpl(repository: gameRepository)
+        self.isGameFavoriteUseCase = IsGameFavoriteUseCaseImpl(repository: favoritesRepository)
+        self.toggleFavoriteGameUseCase = ToggleFavoriteGameUseCaseImpl(repository: favoritesRepository)
+    }
+
+    func discoverViewModel() -> DiscoverViewModel {
+        DiscoverViewModel(searchGamesUseCase: searchGamesUseCase)
+    }
+
+    func upcomingGamesViewModel() -> UpcomingGamesViewModel {
+        UpcomingGamesViewModel(fetchUpcomingGamesUseCase: fetchUpcomingGamesUseCase)
+    }
+
+    func favoritesViewModel() -> FavoritesViewModel {
+        FavoritesViewModel(getFavoriteGamesUseCase: getFavoriteGamesUseCase)
+    }
+
+    func gameDetailViewModel(gameId: String) -> GameDetailViewModel {
+        GameDetailViewModel(
+            gameId: gameId,
+            fetchGameUseCase: fetchGameUseCase,
+            isGameFavoriteUseCase: isGameFavoriteUseCase,
+            toggleFavoriteGameUseCase: toggleFavoriteGameUseCase
         )
     }
 }
-#endif

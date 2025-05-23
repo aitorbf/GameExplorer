@@ -14,18 +14,23 @@ protocol GameRepository {
 }
 
 final class GameRepositoryImpl: GameRepository {
-    private let apiClient = IGDBClient()
+    
+    private let remoteDataSource: IGDBRemoteDataSource
+    
+    init(remoteDataSource: IGDBRemoteDataSource) {
+        self.remoteDataSource = remoteDataSource
+    }
     
     func fetchUpcomingGames() async throws -> [GameEntity] {
-        try await apiClient.fetchUpcomingGames()
+        try await remoteDataSource.fetchUpcomingGames()
     }
     
     func searchGames(searchQuery: String, offset: Int, limit: Int) async throws -> [GameEntity] {
-        try await apiClient.searchGames(searchQuery: searchQuery, offset: offset, limit: limit)
+        try await remoteDataSource.searchGames(searchQuery: searchQuery, offset: offset, limit: limit)
     }
     
     func fetchGame(withId id: String) async throws -> GameEntity? {
-        try await apiClient.fetchGame(withId: id)
+        try await remoteDataSource.fetchGame(withId: id)
     }
 }
 
@@ -33,41 +38,10 @@ final class GameRepositoryImpl: GameRepository {
 final class MockGameRepository: GameRepository {
     
     private let allGames: [GameEntity]
-        
-        init(games: [GameEntity]? = nil) {
-            self.allGames = games ?? [
-                .mock(
-                    id: "1",
-                    name: "The Legend of Zelda: Breath of the Wild"),
-                .mock(
-                    id: "2",
-                    name: "The Witcher 3: Wild Hunt"),
-                .mock(
-                    id: "3",
-                    name: "Red Dead Redemption 2"),
-                .mock(
-                    id: "4",
-                    name: "God of War Ragnarök"),
-                .mock(
-                    id: "5",
-                    name: "Elden Ring"),
-                .mock(
-                    id: "6",
-                    name: "Halo Infinite"),
-                .mock(
-                    id: "7",
-                    name: "Grand Theft Auto V"),
-                .mock(
-                    id: "8",
-                    name: "Final Fantasy VII Remake"),
-                .mock(
-                    id: "9",
-                    name: "Resident Evil 4"),
-                .mock(
-                    id: "10",
-                    name: "Super Mario Odyssey")
-            ]
-        }
+    
+    init(games: [GameEntity]? = nil) {
+        self.allGames = games ?? GameEntity.mockList()
+    }
     
     func fetchUpcomingGames() async throws -> [GameEntity] {
         return allGames

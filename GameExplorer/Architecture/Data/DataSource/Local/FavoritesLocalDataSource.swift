@@ -9,7 +9,6 @@ import Foundation
 import SwiftData
 
 protocol FavoritesLocalDataSource {
-    
     func add(_ game: GameEntity) throws
     func remove(_ gameId: String) throws
     func isFavorite(_ gameId: String) -> Bool

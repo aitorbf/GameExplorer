@@ -7,7 +7,11 @@
 
 import Foundation
 
-struct IsGameFavoriteUseCase {
+protocol IsGameFavoriteUseCase {
+    func execute(gameId: String) -> Bool
+}
+
+struct IsGameFavoriteUseCaseImpl: IsGameFavoriteUseCase {
     
     private let repository: FavoritesRepository
 

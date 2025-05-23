@@ -99,9 +99,10 @@ private extension DiscoverViewModel {
 
 #if DEBUG
 extension DiscoverViewModel {
+    
+    @MainActor
     static func mock() -> DiscoverViewModel {
-        let searchGamesUseCase = SearchGamesUseCase(repository: MockGameRepository())
-        return DiscoverViewModel(searchGamesUseCase: searchGamesUseCase)
+        MockDIContainer.shared.discoverViewModel()
     }
 }
 #endif

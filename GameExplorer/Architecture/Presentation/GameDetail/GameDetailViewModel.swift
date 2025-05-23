@@ -67,18 +67,10 @@ final class GameDetailViewModel: ObservableObject {
 
 #if DEBUG
 extension GameDetailViewModel {
-    @MainActor static func mock() -> GameDetailViewModel {
-        let fetchGameUseCase = FetchGameUseCase(repository: MockGameRepository())
-        // TODO: Mock repository
-        let modelContext = SwiftDataManager.preview.modelContext
-        let isGameFavoriteUseCase = IsGameFavoriteUseCase(repository: FavoritesRepositoryImpl(localDataSource: FavoritesLocalDataSourceImpl(context: modelContext)))
-        let toggleFavoriteGameUseCase = ToggleFavoriteGameUseCase(repository: FavoritesRepositoryImpl(localDataSource: FavoritesLocalDataSourceImpl(context: modelContext)))
-        return GameDetailViewModel(
-            gameId: "1",
-            fetchGameUseCase: fetchGameUseCase,
-            isGameFavoriteUseCase: isGameFavoriteUseCase,
-            toggleFavoriteGameUseCase: toggleFavoriteGameUseCase
-        )
+    
+    @MainActor
+    static func mock() -> GameDetailViewModel {
+        MockDIContainer.shared.gameDetailViewModel(gameId: "1")
     }
 }
 #endif
