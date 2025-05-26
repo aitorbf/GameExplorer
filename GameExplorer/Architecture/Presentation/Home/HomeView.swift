@@ -49,9 +49,9 @@ struct HomeView: View {
 
 #Preview {
     HomeView(
-        discoverViewModel: MockDIContainer.shared.discoverViewModel(),
-        upcomingGamesViewModel: MockDIContainer.shared.upcomingGamesViewModel(),
-        favoritesViewModel: MockDIContainer.shared.favoritesViewModel()
+        discoverViewModel: DIContainer.mock.getDiscoverViewModel(),
+        upcomingGamesViewModel: DIContainer.mock.getUpcomingGamesViewModel(),
+        favoritesViewModel: DIContainer.mock.getFavoritesViewModel()
     )
-    
+    .environmentObject(AppCoordinator())
 }

@@ -45,7 +45,7 @@ final class Coordinator: CoordinatorProtocol {
         switch screen {
         case .gameDetail(let gameId):
             GameDetailView(
-                viewModel: DIContainer.shared.gameDetailViewModel(gameId: gameId)
+                viewModel: DIContainer.shared.getGameDetailViewModel(gameId: gameId)
             )
         }
     }

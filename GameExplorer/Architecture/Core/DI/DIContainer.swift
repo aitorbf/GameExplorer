@@ -5,120 +5,111 @@
 //  Created by Aitor Baragaño Fernández on 10/4/25.
 //
 
-import Foundation
+import Swinject
 import SwiftData
 
 @MainActor
-protocol DIContainerProtocol {
-    func discoverViewModel() -> DiscoverViewModel
-    func upcomingGamesViewModel() -> UpcomingGamesViewModel
-    func favoritesViewModel() -> FavoritesViewModel
-    func gameDetailViewModel(gameId: String) -> GameDetailViewModel
-}
-
-@MainActor
-final class DIContainer: DIContainerProtocol {
+final class DIContainer {
     
-    static let shared: DIContainer = DIContainer()
-    
-    private let modelContext: ModelContext
-    private let gameRepository: GameRepository
-    private let favoritesRepository: FavoritesRepository
+    static let shared = DIContainer()
 
-    private let searchGamesUseCase: SearchGamesUseCase
-    private let fetchUpcomingGamesUseCase: FetchUpcomingGamesUseCase
-    private let getFavoriteGamesUseCase: GetFavoriteGamesUseCase
-    private let fetchGameUseCase: FetchGameUseCase
-    private let isGameFavoriteUseCase: IsGameFavoriteUseCase
-    private let toggleFavoriteGameUseCase: ToggleFavoriteGameUseCase
+    private let container: Container
 
     private init() {
-        self.modelContext = SwiftDataManager.shared.modelContext
-
-        self.gameRepository = GameRepositoryImpl(remoteDataSource: IGDBRemoteDataSourceImpl())
-        self.favoritesRepository = FavoritesRepositoryImpl(
-            localDataSource: FavoritesLocalDataSourceImpl(context: modelContext)
-        )
+        container = Container()
         
-        self.searchGamesUseCase = SearchGamesUseCaseImpl(repository: gameRepository)
-        self.fetchUpcomingGamesUseCase = FetchUpcomingGamesUseCaseImpl(repository: gameRepository)
-        self.getFavoriteGamesUseCase = GetFavoriteGamesUseCaseImpl(repository: favoritesRepository)
-        self.fetchGameUseCase = FetchGameUseCaseImpl(repository: gameRepository)
-        self.isGameFavoriteUseCase = IsGameFavoriteUseCaseImpl(repository: favoritesRepository)
-        self.toggleFavoriteGameUseCase = ToggleFavoriteGameUseCaseImpl(repository: favoritesRepository)
-    }
-
-    func discoverViewModel() -> DiscoverViewModel {
-        DiscoverViewModel(searchGamesUseCase: searchGamesUseCase)
-    }
-
-    func upcomingGamesViewModel() -> UpcomingGamesViewModel {
-        UpcomingGamesViewModel(fetchUpcomingGamesUseCase: fetchUpcomingGamesUseCase)
+        // MARK: - Swift Data Model Context
+        container.register(ModelContext.self) { _ in
+            SwiftDataManager.shared.modelContext
+        }
+        
+        // MARK: - Repositories
+        container.register(GameRepository.self) { resolver in
+            GameRepositoryImpl(remoteDataSource: IGDBRemoteDataSourceImpl())
+        }
+        
+        container.register(FavoritesRepository.self) { resolver in
+            let context = resolver.resolve(ModelContext.self)!
+            let localDataSource = FavoritesLocalDataSourceImpl(context: context)
+            return FavoritesRepositoryImpl(localDataSource: localDataSource)
+        }
+        
+        // MARK: - Use Cases
+        container.register(SearchGamesUseCase.self) { resolver in
+            SearchGamesUseCaseImpl(repository: resolver.resolve(GameRepository.self)!)
+        }
+        container.register(FetchUpcomingGamesUseCase.self) { resolver in
+            FetchUpcomingGamesUseCaseImpl(repository: resolver.resolve(GameRepository.self)!)
+        }
+        container.register(GetFavoriteGamesUseCase.self) { resolver in
+            GetFavoriteGamesUseCaseImpl(repository: resolver.resolve(FavoritesRepository.self)!)
+        }
+        container.register(FetchGameUseCase.self) { resolver in
+            FetchGameUseCaseImpl(repository: resolver.resolve(GameRepository.self)!)
+        }
+        container.register(IsGameFavoriteUseCase.self) { resolver in
+            IsGameFavoriteUseCaseImpl(repository: resolver.resolve(FavoritesRepository.self)!)
+        }
+        container.register(ToggleFavoriteGameUseCase.self) { resolver in
+            ToggleFavoriteGameUseCaseImpl(repository: resolver.resolve(FavoritesRepository.self)!)
+        }
+        
+        // MARK: - ViewModels
+        container.register(DiscoverViewModel.self) { resolver in
+            DiscoverViewModel(searchGamesUseCase: resolver.resolve(SearchGamesUseCase.self)!)
+        }
+        container.register(UpcomingGamesViewModel.self) { resolver in
+            UpcomingGamesViewModel(fetchUpcomingGamesUseCase: resolver.resolve(FetchUpcomingGamesUseCase.self)!)
+        }
+        container.register(FavoritesViewModel.self) { resolver in
+            FavoritesViewModel(getFavoriteGamesUseCase: resolver.resolve(GetFavoriteGamesUseCase.self)!)
+        }
+        container.register(GameDetailViewModel.self) { (resolver, gameId: String) in
+            GameDetailViewModel(
+                gameId: gameId,
+                fetchGameUseCase: resolver.resolve(FetchGameUseCase.self)!,
+                isGameFavoriteUseCase: resolver.resolve(IsGameFavoriteUseCase.self)!,
+                toggleFavoriteGameUseCase: resolver.resolve(ToggleFavoriteGameUseCase.self)!
+            )
+        }
     }
     
-    func favoritesViewModel() -> FavoritesViewModel {
-        FavoritesViewModel(getFavoriteGamesUseCase: getFavoriteGamesUseCase)
+    func getDiscoverViewModel() -> DiscoverViewModel {
+        container.resolve(DiscoverViewModel.self)!
     }
     
-    func gameDetailViewModel(gameId: String) -> GameDetailViewModel {
-        GameDetailViewModel(
-            gameId: gameId,
-            fetchGameUseCase: fetchGameUseCase,
-            isGameFavoriteUseCase: isGameFavoriteUseCase,
-            toggleFavoriteGameUseCase: toggleFavoriteGameUseCase
-        )
+    func getUpcomingGamesViewModel() -> UpcomingGamesViewModel {
+        container.resolve(UpcomingGamesViewModel.self)!
+    }
+    
+    func getFavoritesViewModel() -> FavoritesViewModel {
+        container.resolve(FavoritesViewModel.self)!
+    }
+    
+    func getGameDetailViewModel(gameId: String) -> GameDetailViewModel {
+        container.resolve(GameDetailViewModel.self, argument: gameId)!
     }
 }
 
-@MainActor
-final class MockDIContainer: DIContainerProtocol {
-    
-    static let shared = MockDIContainer()
-    
-    private let modelContext: ModelContext
-    private let gameRepository: GameRepository
-    private let favoritesRepository: FavoritesRepository
+// MARK: - Mock Container for Testing and Previews
 
-    private let searchGamesUseCase: SearchGamesUseCase
-    private let fetchUpcomingGamesUseCase: FetchUpcomingGamesUseCase
-    private let getFavoriteGamesUseCase: GetFavoriteGamesUseCase
-    private let fetchGameUseCase: FetchGameUseCase
-    private let isGameFavoriteUseCase: IsGameFavoriteUseCase
-    private let toggleFavoriteGameUseCase: ToggleFavoriteGameUseCase
-
-    private init() {
+extension DIContainer {
+    
+    static var mock: DIContainer {
+        let container = DIContainer()
         
-        self.modelContext = SwiftDataManager.test.modelContext
-
-        self.gameRepository = MockGameRepository()
-        self.favoritesRepository = FavoritesRepositoryImpl.mock(preloadedGames: GameEntity.mockList())
-
-        self.searchGamesUseCase = SearchGamesUseCaseImpl(repository: gameRepository)
-        self.fetchUpcomingGamesUseCase = FetchUpcomingGamesUseCaseImpl(repository: gameRepository)
-        self.getFavoriteGamesUseCase = GetFavoriteGamesUseCaseImpl(repository: favoritesRepository)
-        self.fetchGameUseCase = FetchGameUseCaseImpl(repository: gameRepository)
-        self.isGameFavoriteUseCase = IsGameFavoriteUseCaseImpl(repository: favoritesRepository)
-        self.toggleFavoriteGameUseCase = ToggleFavoriteGameUseCaseImpl(repository: favoritesRepository)
-    }
-
-    func discoverViewModel() -> DiscoverViewModel {
-        DiscoverViewModel(searchGamesUseCase: searchGamesUseCase)
-    }
-
-    func upcomingGamesViewModel() -> UpcomingGamesViewModel {
-        UpcomingGamesViewModel(fetchUpcomingGamesUseCase: fetchUpcomingGamesUseCase)
-    }
-
-    func favoritesViewModel() -> FavoritesViewModel {
-        FavoritesViewModel(getFavoriteGamesUseCase: getFavoriteGamesUseCase)
-    }
-
-    func gameDetailViewModel(gameId: String) -> GameDetailViewModel {
-        GameDetailViewModel(
-            gameId: gameId,
-            fetchGameUseCase: fetchGameUseCase,
-            isGameFavoriteUseCase: isGameFavoriteUseCase,
-            toggleFavoriteGameUseCase: toggleFavoriteGameUseCase
-        )
+        container.container.register(ModelContext.self) { _ in
+            SwiftDataManager.test.modelContext
+        }
+        
+        container.container.register(GameRepository.self) { _ in
+            MockGameRepository()
+        }
+        
+        container.container.register(FavoritesRepository.self) { resolver in
+            FavoritesRepositoryImpl.mock(preloadedGames: GameEntity.mockList())
+        }
+        
+        return container
     }
 }

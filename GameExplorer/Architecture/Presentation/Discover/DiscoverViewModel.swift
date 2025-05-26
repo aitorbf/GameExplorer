@@ -102,7 +102,7 @@ extension DiscoverViewModel {
     
     @MainActor
     static func mock() -> DiscoverViewModel {
-        MockDIContainer.shared.discoverViewModel()
+        DIContainer.mock.getDiscoverViewModel()
     }
 }
 #endif

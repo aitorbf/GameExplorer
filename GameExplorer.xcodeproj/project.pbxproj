@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		5B40B8D52DB9268900103383 /* YouTubePlayerKit in Frameworks */ = {isa = PBXBuildFile; productRef = 5B40B8D42DB9268900103383 /* YouTubePlayerKit */; };
+		5B6C7F242DE4801A0096F885 /* Swinject in Frameworks */ = {isa = PBXBuildFile; productRef = 5B6C7F232DE4801A0096F885 /* Swinject */; };
 		5B8333692DD0BA9B009AB738 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 5B8333682DD0BA9B009AB738 /* Kingfisher */; };
 		5BACD1F72DB7B44200E70D9F /* IGDB-SWIFT-API in Frameworks */ = {isa = PBXBuildFile; productRef = 5BACD1F62DB7B44200E70D9F /* IGDB-SWIFT-API */; };
 /* End PBXBuildFile section */
@@ -74,6 +75,7 @@
 				5B8333692DD0BA9B009AB738 /* Kingfisher in Frameworks */,
 				5B40B8D52DB9268900103383 /* YouTubePlayerKit in Frameworks */,
 				5BACD1F72DB7B44200E70D9F /* IGDB-SWIFT-API in Frameworks */,
+				5B6C7F242DE4801A0096F885 /* Swinject in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -137,6 +139,7 @@
 				5BACD1F62DB7B44200E70D9F /* IGDB-SWIFT-API */,
 				5B40B8D42DB9268900103383 /* YouTubePlayerKit */,
 				5B8333682DD0BA9B009AB738 /* Kingfisher */,
+				5B6C7F232DE4801A0096F885 /* Swinject */,
 			);
 			productName = GameExplorer;
 			productReference = 5BA38EC82DA7FD410020836C /* GameExplorer.app */;
@@ -224,6 +227,7 @@
 				5BACD1F52DB7B44200E70D9F /* XCRemoteSwiftPackageReference "IGDB-SWIFT-API" */,
 				5B40B8D32DB9268900103383 /* XCRemoteSwiftPackageReference "YouTubePlayerKit" */,
 				5B8333672DD0BA9B009AB738 /* XCRemoteSwiftPackageReference "Kingfisher" */,
+				5B6C7F222DE4801A0096F885 /* XCRemoteSwiftPackageReference "Swinject" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 5BA38EC92DA7FD410020836C /* Products */;
@@ -628,6 +632,14 @@
 				minimumVersion = 2.0.0;
 			};
 		};
+		5B6C7F222DE4801A0096F885 /* XCRemoteSwiftPackageReference "Swinject" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Swinject/Swinject.git";
+			requirement = {
+				kind = upToNextMinorVersion;
+				minimumVersion = 2.9.1;
+			};
+		};
 		5B8333672DD0BA9B009AB738 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
@@ -651,6 +663,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 5B40B8D32DB9268900103383 /* XCRemoteSwiftPackageReference "YouTubePlayerKit" */;
 			productName = YouTubePlayerKit;
+		};
+		5B6C7F232DE4801A0096F885 /* Swinject */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5B6C7F222DE4801A0096F885 /* XCRemoteSwiftPackageReference "Swinject" */;
+			productName = Swinject;
 		};
 		5B8333682DD0BA9B009AB738 /* Kingfisher */ = {
 			isa = XCSwiftPackageProductDependency;

@@ -16,9 +16,9 @@ final class AppCoordinator: ObservableObject {
     func buildHomeScreen() -> some View {
         ZStack {
             HomeView(
-                discoverViewModel: DIContainer.shared.discoverViewModel(),
-                upcomingGamesViewModel: DIContainer.shared.upcomingGamesViewModel(),
-                favoritesViewModel: DIContainer.shared.favoritesViewModel()
+                discoverViewModel: DIContainer.shared.getDiscoverViewModel(),
+                upcomingGamesViewModel: DIContainer.shared.getUpcomingGamesViewModel(),
+                favoritesViewModel: DIContainer.shared.getFavoritesViewModel()
             )
             
             SplashScreen()

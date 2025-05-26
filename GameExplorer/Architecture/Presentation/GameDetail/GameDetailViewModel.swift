@@ -70,7 +70,7 @@ extension GameDetailViewModel {
     
     @MainActor
     static func mock() -> GameDetailViewModel {
-        MockDIContainer.shared.gameDetailViewModel(gameId: "1")
+        DIContainer.mock.getGameDetailViewModel(gameId: "1")
     }
 }
 #endif

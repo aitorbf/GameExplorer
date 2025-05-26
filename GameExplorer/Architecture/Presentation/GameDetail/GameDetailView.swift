@@ -335,6 +335,8 @@ private extension GameDetailView {
             
             Text(viewModel.game?.platforms.joined(separator: ", ") ?? "")
                 .foregroundColor(.textSecondary)
+                .multilineTextAlignment(.leading)
+                .fixedSize(horizontal: false, vertical: true)
             
             Divider()
                 .foregroundStyle(.shadowPurple)
@@ -345,6 +347,8 @@ private extension GameDetailView {
             
             Text(viewModel.game?.companies.joined(separator: ", ") ?? "")
                 .foregroundColor(.textSecondary)
+                .multilineTextAlignment(.leading)
+                .fixedSize(horizontal: false, vertical: true)
         }
     }
 }

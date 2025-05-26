@@ -27,7 +27,7 @@ extension FavoritesViewModel {
     
     @MainActor
     static func mock() -> FavoritesViewModel {
-        MockDIContainer.shared.favoritesViewModel()
+        DIContainer.mock.getFavoritesViewModel()
     }
 }
 #endif

@@ -43,7 +43,7 @@ extension UpcomingGamesViewModel {
     
     @MainActor
     static func mock() -> UpcomingGamesViewModel {
-        MockDIContainer.shared.upcomingGamesViewModel()
+        DIContainer.mock.getUpcomingGamesViewModel()
     }
 }
 #endif
