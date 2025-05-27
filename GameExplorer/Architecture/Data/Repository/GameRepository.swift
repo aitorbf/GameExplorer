@@ -64,4 +64,21 @@ final class MockGameRepository: GameRepository {
         return allGames.first { $0.id == id }
     }
 }
+
+final class ThrowingGameRepository: GameRepository {
+    
+    enum TestError: Error { case fetchFailed }
+    
+    func fetchUpcomingGames() async throws -> [GameEntity] {
+        throw TestError.fetchFailed
+    }
+    
+    func searchGames(searchQuery: String, offset: Int, limit: Int) async throws -> [GameEntity] {
+        throw TestError.fetchFailed
+    }
+    
+    func fetchGame(withId id: String) async throws -> GameEntity? {
+        throw TestError.fetchFailed
+    }
+}
 #endif

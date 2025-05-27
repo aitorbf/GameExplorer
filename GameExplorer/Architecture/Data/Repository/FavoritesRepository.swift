@@ -49,6 +49,7 @@ extension FavoritesRepositoryImpl {
     
     @MainActor
     static func mock(preloadedGames: [GameEntity] = []) -> FavoritesRepository {
+        SwiftDataManager.resetTestContext()
         let context = SwiftDataManager.test.modelContext
         
         preloadedGames.forEach { context.insert($0) }
