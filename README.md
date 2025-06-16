@@ -5,7 +5,7 @@ Built entirely in Swift using SwiftUI, MVVM, Coordinator pattern, and a clean mo
 
 ## 🧠 Tech Stack
 
-- **Swift 6** - Modern, safe, and powerful
+- **Swift 5** - Modern, safe, and powerful
 - **SwiftUI** - Declarative UI framework
 - **MVVM Architecture** - Clear separation of concerns for Views and Logic
 - **Coordinator Pattern** - Scalable and decoupled navigation
@@ -26,7 +26,7 @@ Built entirely in Swift using SwiftUI, MVVM, Coordinator pattern, and a clean mo
 
 - iOS 17+
 - Xcode 15.3+
-- Swift 6
+- Swift 5
 
 ## 🔐 API Access
 
@@ -34,20 +34,15 @@ This app uses the [IGDB API](https://api-docs.igdb.com/) via Twitch OAuth 2.0 au
 You must obtain your own **Client ID** and **Client Secret** to configure API access.  
 Create a `Config.xcconfig` file based on the provided template (not tracked in Git).
 
-## 🧹 Project Structure
+## 🏗️ Project Structure
 
 - **Architecture**
   - `Presentation/` — SwiftUI Views and ViewModels
   - `Domain/` — Use Cases and Models
   - `Data/` — Repositories and API Clients
-  - `Core/` — App setup, DI container, Coordinator
-- **Mocks/** — Fake repositories and use cases for Previews and Tests
-- **Tests/** — Unit tests and snapshot tests
+  - `Core/` — Dependency injection, Coordinators, Extensions
+  - `System/` — Configuration files
 
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-Made with ❤️ by a passionate iOS developer who believes in clean code, scalable apps, and great user experiences.

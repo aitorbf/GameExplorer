@@ -15,7 +15,7 @@ struct SplashScreen: View {
         ZStack {
             Color.shadowPurple
             
-            Image(.gamepad)
+            Image(.gamePad)
                 .resizable()
                 .scaledToFit()
                 .frame(width: 80, height: 80)
